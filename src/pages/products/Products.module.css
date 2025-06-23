@@ -1,0 +1,91 @@
+.content {
+            padding: 20px;
+        }
+
+        /* Image Upload Section */
+        .image-section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .image-upload {
+            width: 100%;
+            height: 200px;
+            background-color: #e8e8e8;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.2s;
+        }
+
+        .image-upload:hover {
+            background-color: #ddd;
+        }
+
+        .camera-icon {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            width: 36px;
+            height: 36px;
+            background-color: #bbb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .camera-icon::before {
+            content: "📷";
+            font-size: 16px;
+        }
+
+        /* Form Fields */
+        .form-section {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0;
+            border: none;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 16px;
+            color: #333;
+            background: transparent;
+            padding-bottom: 12px;
+            margin-bottom: 4px;
+        }
+
+        .form-input::placeholder {
+            color: var(--placehoder-color);
+            font-size: 14px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-bottom-color: #ffb5a3;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 32px;
+        }

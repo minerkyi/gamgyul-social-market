@@ -2,19 +2,46 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
+  padding: 0 16px;
+
+  height: 4.8rem;
+
   background-color: #ffffff;
   border-bottom: 1px solid #f0f0f0;
 }
 
 .header-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #333333;
+  font-size: 14px;
+  font-weight: 500;
+  color: #000000;
+  flex: 1;
   margin: 0;
 }
 
 .search-icon {
   width: 24px;
   height: 24px;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+}
+
+.save-button {
+  background-color: var(--sub-color);
+  color: #ffffff;
+  border: none;
+  
+  width: 9rem;
+  height: 3.2rem;
+
+  border-radius: 32px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
 }

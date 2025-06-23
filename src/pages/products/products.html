@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상품 등록</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #ffffff;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 375px;
+            min-height: 100vh;
+            background-color: #ffffff;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background-color: #ffffff;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .back-button {
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+
+        .save-button {
+            background-color: #ffb5a3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* Content */
+        .content {
+            padding: 20px;
+        }
+
+        /* Image Upload Section */
+        .image-section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .image-upload {
+            width: 100%;
+            height: 200px;
+            background-color: #e8e8e8;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.2s;
+        }
+
+        .image-upload:hover {
+            background-color: #ddd;
+        }
+
+        .camera-icon {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            width: 36px;
+            height: 36px;
+            background-color: #bbb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .camera-icon::before {
+            content: "📷";
+            font-size: 16px;
+        }
+
+        /* Form Fields */
+        .form-section {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0;
+            border: none;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 16px;
+            color: #333;
+            background: transparent;
+            padding-bottom: 12px;
+            margin-bottom: 4px;
+        }
+
+        .form-input::placeholder {
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-bottom-color: #ffb5a3;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 32px;
+        }
+
+        /* Responsive */
+        @media (max-width: 375px) {
+            .container {
+                max-width: 100%;
+            }
+            
+            .content {
+                padding: 20px 16px;
+            }
+        }
+
+        /* Back arrow icon */
+        .back-arrow {
+            width: 24px;
+            height: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <button class="back-button">
+                <svg class="back-arrow" viewBox="0 0 24 24" fill="none">
+                    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <button class="save-button">저장</button>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Image Upload Section -->
+            <div class="image-section">
+                <div class="section-title">이미지 등록</div>
+                <div class="image-upload">
+                    <div class="camera-icon"></div>
+                </div>
+            </div>
+
+            <!-- Form Fields -->
+            <div class="form-group">
+                <label class="form-label">상품명</label>
+                <input type="text" class="form-input" placeholder="ex ) 5월 이벤트용 상품명">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">가격</label>
+                <input type="text" class="form-input" placeholder="숫자만 입력 가능합니다">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">한줄 설명</label>
+                <input type="text" class="form-input" placeholder="간단한 상품설명 한줄">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
