@@ -4,6 +4,7 @@ import Index from './pages/Index';
 import Products from './pages/products/Products';
 import Page404 from './pages/Page404';
 import Footer from './components/Footer';
+import Sample from './pages/Sample';
 import { FooterProvider } from "./contexts/FooterContext";
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Index />} />
         <Route path='/products' element={<Products />} />
+        <Route path='/sample' element={<Sample />} />
         <Route path='*' element={<Page404 />} />
       </Routes>
       <FooterProvider>
