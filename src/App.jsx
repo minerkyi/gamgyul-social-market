@@ -4,6 +4,7 @@ import Index from './pages/Index';
 import Products from './pages/products/Products';
 import Page404 from './pages/Page404';
 import Footer from './components/Footer';
+import Sample from './pages/Sample';
 import { FooterProvider } from "./contexts/FooterContext";
 import Sample from './pages/products/sample';
 
