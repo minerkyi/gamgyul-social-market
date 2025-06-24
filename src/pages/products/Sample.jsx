@@ -161,36 +161,57 @@ export default function Sample() {
       };
 
       // 여기서 실제 서버로 데이터 전송
-      await new Promise(resolve => setTimeout(resolve, 2000)); // 시뮬레이션
+      // await new Promise(resolve => setTimeout(resolve, 2000)); // 시뮬레이션
 
-      // const url = "https://dev.wenivops.co.kr/services/mandarin";
+      const url = "https://dev.wenivops.co.kr/services/mandarin";
+      const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NWEzNWQxNTFiYzhhZjhmNjI0NzQ2MiIsImV4cCI6MTc1NTkyNjU3MiwiaWF0IjoxNzUwNzQyNTcyfQ.fIQNjIQLoymvRw6VD8GXHeDvis_7cNvwD26Gqs1z';
+      try {
+        const response = await fetch(url+"/user/myinfo", {
+            method: "GET",
+            headers: {
+              "Authorization" : `Bearer ${token}`,
+              // "Content-type" : "application/json"
+            }
+            // headers: {
+            //   "Content-type" : "application/json"
+            // },
+            // body: JSON.stringify({
+            //   "user": {
+            //     "email": "test@test.com",
+            //     "password": "1234!@#$"
+            //   }
+            // })
+            // body: JSON.stringify({
+            //   "user": {
+            //     "username": "테스트",
+            //     "email": "test@test.com",
+            //     "password": "1234!@#$",
+            //     "accountname": "test1",
+            //     "intro": "자기소개",
+            //     "image": "https://dev.wenivops.co.kr/services/mandarin/1641906557953.png"
+            // }})
+        });
 
-      // try {
-      //   const response = await fetch(url+"/image/uploadfiles", {
-      //       method: "POST",
-      //       body: submitData
-      //   });
-
-      //   const data = await response.json();
-      //   console.log(data.info);
+        const data = await response.json();
+        console.log(data.info);
         
-      //   const name = [];
-      //   for(let file in data.info) {
-      //     for(let i of file) {
-      //       name.push(i["filename"]);
-      //     }
-      //   }
+        const name = [];
+        for(let file in data.info) {
+          for(let i of file) {
+            name.push(i["filename"]);
+          }
+        }
 
-      //   if(name.length > 1) {
-      //     console.log('name', name.join(","));
-      //     return name.join(",");
-      //   } else {
-      //     console.log('name', name[0]);
-      //     return name[0];
-      //   }
-      // } catch (err) {
-      //   console.error(err);
-      // }
+        if(name.length > 1) {
+          console.log('name', name.join(","));
+          return name.join(",");
+        } else {
+          console.log('name', name[0]);
+          return name[0];
+        }
+      } catch (err) {
+        console.error(err);
+      }
             
       alert('성공적으로 등록되었습니다!');
       
