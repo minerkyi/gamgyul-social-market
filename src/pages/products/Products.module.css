@@ -71,7 +71,7 @@
 
 .form-input::placeholder {
   font-size: 14px;
-  color: var(--placehoder-color);
+  color: var(--placeholder-color);
 }
 
 .form-input:focus {

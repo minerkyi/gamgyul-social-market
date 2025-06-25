@@ -9,7 +9,7 @@ export const FooterProvider = ({children}) => {
   const isVisibled = path === '/profile';
 
   return (
-    <FooterContext.Provider value={isVisibled}>
+    <FooterContext.Provider value={{isVisibled, path}}>
       {children}
     </FooterContext.Provider>
   );

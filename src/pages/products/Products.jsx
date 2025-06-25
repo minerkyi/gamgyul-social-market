@@ -4,27 +4,35 @@ import styles from './Products.module.css';
 import { useFetchApi } from '../../hooks/useFetchApi';
 
 export default function Products() {
-
-  const handleSave = () => {
-    if(seletedImg) {
-      const formData = new FormData();
-      formData.append('image', seletedImg);
-      // const [data, loading, error] = useFetchApi('/image/uploadfiles', 'POST', null, formData);
-      const [data] = useFetchApi('/image/uploadfiles', 'POST', null, formData);
-      console.log(data);
-    }
-  };
-
+  
   const fileInputRef = useRef(null);
   const [seletedImg, setSeletedImg] = useState(null);
   const [imgPreview, setImgPreview] = useState(null);
+  const [image, setImage] = useState(null);
+  const [itemName, setItemName] = useState('');
+  const [price, setPrice] = useState(0);
+  const [displayPrice, setDisplayPrice] = useState('');
+  const [link, setLink] = useState(''); 
+  const [disabled, setDisabled] = useState(true);
+  
+  const token = localStorage.getItem('token');
+  const [fetchImg, result, isLoading, isError] = useFetchApi('/image/uploadfile', {method: 'POST'});
+  const [fetchProduct] = useFetchApi('/product',
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-type': 'application/json'
+      }
+    });
 
   const handleImgUpload = () => {
     fileInputRef.current.click();
   };
 
   const handleImgChange = (e) => {
-    console.log('change');
+
+    setImage(null);
     const file = e.target.files[0];
     if(file) {
       setSeletedImg(file);
@@ -32,6 +40,82 @@ export default function Products() {
     } else {
       setSeletedImg(null);
       setImgPreview(null);
+    }
+  };
+
+  const handleItemName = (e) => {
+    const value = e.target.value;
+    setItemName(value);
+  };
+
+  const handlePrice = (e) => {
+    const value = e.target.value;
+    let num = 0;
+    if(value !== '') {
+      num = Number(value.replace(/[^\d]/g, ''));
+      setDisplayPrice(num.toLocaleString());
+    } else {
+      setDisplayPrice(value);
+    }
+    setPrice(num);
+  };
+
+  const handleLink = (e) => {
+    const value = e.target.value;
+    setLink(value);
+  };
+
+  useEffect(() => {
+    const urlRegex = /^(https?):\/\/(?:www\.)?[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+(?:\/[^\s]*)?$/i;
+    if(itemName !== '' && price > 0 && urlRegex.test(link) && seletedImg) {
+      setDisabled(false);
+    } else {
+      setDisabled(true);
+    }
+  }, [itemName, price, link, seletedImg]);
+
+  const handleSave = async () => {
+    if(seletedImg) {
+      const formData = new FormData();
+      formData.append('image', seletedImg);
+      let filename = image;
+
+      if(!image) {
+        const [data, isErrorUpload] = await fetchImg(formData);
+
+        if(isErrorUpload) {
+          alert(data.message);
+          return;
+        }
+        filename = data.info.filename;
+
+        if(filename) {
+          setImage(filename);
+        }
+      }
+
+      if(filename || image) {
+        const [dataProduct, isErrorProduct] = await fetchProduct(JSON.stringify({
+          'product': {
+            itemName,
+            price: Number(price),
+            link,
+            itemImage: filename
+          }
+        }));
+
+        if(isErrorProduct) {
+          alert(data.message);
+          return;
+        } else {
+          setItemName('');
+          setPrice(0);
+          setDisplayPrice('');
+          setLink('');
+          setSeletedImg(null);
+          setImgPreview(null);
+        }
+      }
     }
   };
 
@@ -43,9 +127,10 @@ export default function Products() {
     }
   }, [imgPreview]);
 
+
   return (
     <>
-      <Header title={'상품 등록'} type={'products'} onClick={handleSave} />
+      <Header title={'상품 등록'} type={'products'} onClick={handleSave} disabled={disabled} />
       <main className={styles["content"]}>
         <section className={styles["image-section"]}>
           <h2 className={styles["section-title"]}>이미지 등록</h2>
@@ -57,19 +142,19 @@ export default function Products() {
         </section>
 
         <form>
-          <fieldset className={styles["form-group"]} htmlFor="name">
-            <label className={styles["form-label"]} htmlFor="name">상품명</label>
-            <input type="text" className={styles["form-input"]} id="name" name="name" placeholder="2~15자 이내여야 합니다." required minLength={2} maxLength={15} />
+          <fieldset className={styles["form-group"]}>
+            <label className={styles["form-label"]} htmlFor="itemName">상품명</label>
+            <input type="text" className={styles["form-input"]} id="itemName" name="itemName" value={itemName} placeholder="2~15자 이내여야 합니다." required minLength={2} maxLength={15} onChange={handleItemName} />
           </fieldset>
 
           <fieldset className={styles["form-group"]}>
-            <label className={`${styles["form-label"]} fw-500`} htmlFor="price">가격</label>
-            <input type="number" className={styles["form-input"]} id="price" name="price" placeholder="숫자만 입력 가능합니다." required min={0} />
+            <label className={`${styles["form-label"]} fw-500`}htmlFor="price">가격</label>
+            <input type="text" className={styles["form-input"]} id="price" name="price" placeholder="숫자만 입력 가능합니다." required value={displayPrice} onChange={handlePrice} />
           </fieldset>
 
           <fieldset className={styles["form-group"]}>
             <label className={`${styles["form-label"]} fw-500`} htmlFor="link">판매 링크</label>
-            <input type="url" className={styles["form-input"]} id="link" name="link" placeholder="URL을 입력해 주세요." required />
+            <input type="url" className={styles["form-input"]} id="link" name="link" placeholder="URL을 입력해 주세요." required value={link} onChange={handleLink} />
           </fieldset>
         </form>
       </main>

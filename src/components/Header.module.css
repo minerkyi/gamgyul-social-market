@@ -41,7 +41,7 @@
   width: 9rem;
   height: 3.2rem;
 
-  background-color: var(--sub-color);
+  background-color: var(--main-color);
   border: none;
   border-radius: 32px;
   
@@ -50,6 +50,9 @@
   font-weight: 500;
 
   cursor: pointer;
+}
+.save-button:disabled {
+  background-color: var(--sub-color);
 }
 
 .empty-button {
