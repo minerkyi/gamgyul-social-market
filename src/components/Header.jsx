@@ -5,7 +5,9 @@ import iconSearch from '../assets/icon/icon-search.png';
 import iconArrow from '../assets/icon/icon-arrow-left.png';
 import iconMore from '../assets/icon/icon-more-vertical.png';
 
-export default function Header({title, type, onClick}) {
+export default function Header(props) {
+
+  const {title, type, onClick, disabled = false} = props;
 
   if(type === 'products') {
     return (
@@ -14,7 +16,7 @@ export default function Header({title, type, onClick}) {
           <img src={iconArrow} alt="" />
         </button>
         <h1 className={`${styles["header-title"]} sr-only`}>{title}</h1>
-        <button className={styles["save-button"]} onClick={onClick}>저장</button>
+        <button className={styles["save-button"]} onClick={onClick} disabled={disabled}>저장</button>
       </header>
     );
   } else if(type === 'profile') {

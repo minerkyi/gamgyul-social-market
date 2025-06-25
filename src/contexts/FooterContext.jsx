@@ -6,10 +6,10 @@ const FooterContext = createContext(false);
 export const FooterProvider = ({children}) => {
   const location = useLocation();
   const path = location.pathname;
-  const isVisibled = path === '/products';
+  const isVisibled = path === '/profile';
 
   return (
-    <FooterContext.Provider value={isVisibled}>
+    <FooterContext.Provider value={{isVisibled, path}}>
       {children}
     </FooterContext.Provider>
   );
