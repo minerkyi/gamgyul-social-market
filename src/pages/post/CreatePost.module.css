@@ -1,0 +1,47 @@
+.inputArea {
+  height: 100;
+  display: flex; /* 프로필 아이콘과 textarea를 한 줄에 배치 */
+  align-items: flex-start; /* 프로필 아이콘과 텍스트 시작점을 맞춤 */
+  padding: 15px; /* 내부 여백 */
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  /* 부모 컨테이너의 너비를 100%로 설정 (만약 필요하다면) */
+  /* width: 100%; */
+}
+
+.profileIcon {
+  /* 프로필 아이콘 스타일 유지 */
+  flex-shrink: 0; /* 아이콘이 줄어들지 않도록 고정 */
+  width: 48px; /* 아이콘 크기 예시 */
+  height: 48px;
+  border-radius: 50%;
+  background-color: #ddd;
+  margin-right: 15px; /* 아이콘과 textarea 사이 간격 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profileInner {
+  /* 프로필 내부 스타일 */
+  width: 24px;
+  height: 24px;
+  background-color: #bbb;
+  border-radius: 50%;
+}
+
+.postInput {
+  flex-grow: 1; /* ★ 중요: 남은 공간을 모두 차지하도록 함 */
+  width: 100%; /* ★ 중요: flex-grow와 함께 사용하면 부모 너비에 맞춰짐 */
+  border: none;
+  outline: none;
+  font-size: 16px;
+  line-height: 1.5; /* 줄 간격 */
+  padding: 10px; /* 내부 패딩 */
+  resize: vertical; /* ★ 중요: 사용자가 수직으로만 크기 조절 허용 */
+  min-height: 100px; /* ★ 중요: 최소 높이 설정 (사용자 경험 개선) */
+  box-sizing: border-box; /* 패딩과 보더가 width/height에 포함되도록 */
+  background-color: transparent;
+  /* overflow: hidden; */ /* 자동 높이 조절 시 스크롤바 숨김 */
+}
