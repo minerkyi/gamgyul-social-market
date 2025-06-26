@@ -25,7 +25,7 @@ function ProfilePage() {
   const myAccountname = localStorage.getItem('accountname');
   const isMyProfile = !accountname || accountname === myAccountname;
 
-  // --- API 데이터 요청 로직 ---
+  // API 데이터 요청 로직
   useEffect(() => {
     const fetchAllData = async () => {
       const API_URL = 'https://dev.wenivops.co.kr/services/mandarin';
@@ -72,7 +72,7 @@ function ProfilePage() {
     fetchAllData();
   }, [accountname, myAccountname]);
 
-  // --- 이벤트 핸들러 함수 ---
+  // 이벤트 핸들러 함수
   const handleOpenProductModal = (product) => {
     setSelectedProduct(product);
     setIsProductModalOpen(true);
@@ -119,7 +119,7 @@ function ProfilePage() {
   if (loading) return <div>로딩 중...</div>;
   if (!profile) return <div>프로필 정보를 불러올 수 없습니다.</div>;
 
-  // --- 최종 렌더링 ---
+  // 최종 렌더링
   return (
     <div className={styles.pageContainer}>
       <div className={styles.headerWrapper}>
@@ -155,7 +155,6 @@ function ProfilePage() {
 
       <Footer />
 
-      {/* 상품 메뉴 모달 */}
       <Modal
         isOpen={isProductModalOpen}
         onClose={() => setIsProductModalOpen(false)}
@@ -182,7 +181,6 @@ function ProfilePage() {
         </div>
       </Modal>
 
-      {/* 설정 및 로그아웃 모달 */}
       <Modal
         isOpen={isSettingsModalOpen}
         onClose={() => setIsSettingsModalOpen(false)}

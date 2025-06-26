@@ -1,8 +1,6 @@
 import { Link } from 'react-router-dom';
 import styles from './ProfileInfo.module.css';
 
-import basicProfileImage from '../../assets/Ellipse-1.png';
-
 function ProfileInfo({
   image,
   name,
@@ -11,13 +9,20 @@ function ProfileInfo({
   followerCount,
   followingCount,
 }) {
+  const basicProfileImageUrl = new URL(
+    '../../assets/basic-profile-img.png',
+    import.meta.url
+  ).href;
+
+  const isHttpUrl = image && image.startsWith('http');
+
   const handleImageError = (e) => {
-    e.target.src = basicProfileImage;
+    e.target.src = basicProfileImageUrl;
   };
+
   return (
     <section className={styles.profileContainer}>
       <div className={styles.profileInfo}>
-        {/* 2. 기존 a태그를 Link로 바꾸고, to prop으로 경로를 지정합니다. */}
         <Link
           to={`/profile/${accountname}/followers`}
           className={styles.followCount}
@@ -28,7 +33,7 @@ function ProfileInfo({
 
         <div className={styles.profileImageWrapper}>
           <img
-            src={image}
+            src={isHttpUrl ? image : basicProfileImageUrl}
             alt={`${name}의 프로필`}
             onError={handleImageError}
           />
