@@ -55,6 +55,11 @@
   justify-content: center;
 }
 
+.errorMessage {
+  color: red;
+  font-size: 8px;
+}
+
 .inputGroup:focus-within {
   border-bottom-color: #f26e22;
 }

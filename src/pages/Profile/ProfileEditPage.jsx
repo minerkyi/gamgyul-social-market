@@ -7,11 +7,13 @@ function ProfileEditPage() {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
+  const [profile, setProfile] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+
   const [username, setUsername] = useState('');
   const [accountId, setAccountId] = useState('');
   const [intro, setIntro] = useState('');
-  const [imagePreview, setImagePreview] = useState('');
-  const [imageFile, setImageFile] = useState(null);
 
   const [isUsernameValid, setIsUsernameValid] = useState(true);
   const [isAccountIdValid, setIsAccountIdValid] = useState(true);
@@ -23,7 +25,6 @@ function ProfileEditPage() {
     import.meta.url
   ).href;
 
-  // 컴포넌트 마운트 시 기존 프로필 정보 불러오기
   useEffect(() => {
     const fetchCurrentProfile = async () => {
       try {
@@ -31,40 +32,42 @@ function ProfileEditPage() {
         const token = localStorage.getItem('token');
         const myAccountname = localStorage.getItem('accountname');
 
+        if (!token || !myAccountname) {
+          console.error('로그인 정보가 없습니다. 로그인 페이지로 이동합니다.');
+          alert('로그인 정보가 없습니다. 다시 로그인해주세요.');
+          navigate('/');
+          return;
+        }
+
         const response = await fetch(`${API_URL}/profile/${myAccountname}`, {
           method: 'GET',
           headers: { Authorization: `Bearer ${token}` },
         });
-        const data = await response.json();
-        const profile = data.profile;
 
-        setUsername(profile.username);
-        setAccountId(profile.accountname);
-        setIntro(profile.intro);
-        setImagePreview(profile.image || basicProfileImageUrl);
+        if (!response.ok) {
+          throw new Error('프로필 정보를 불러오는 데 실패했습니다.');
+        }
+
+        const data = await response.json();
+        const profileData = data.profile;
+
+        if (!profileData) {
+          throw new Error('서버로부터 받은 프로필 데이터가 올바르지 않습니다.');
+        }
+
+        setProfile(profileData);
+        setUsername(profileData.username);
+        setAccountId(profileData.accountname);
+        setIntro(profileData.intro);
       } catch (error) {
-        console.error('기존 프로필 정보를 불러오는 데 실패했습니다.', error);
-        setImagePreview(basicProfileImageUrl);
+        console.error(error);
+        alert('프로필 정보를 가져오는 중 문제가 발생했습니다.');
+        navigate('/profile');
       }
     };
     fetchCurrentProfile();
-  }, []);
+  }, [navigate]);
 
-  // 이미지 미리보기 URL 생명주기 관리
-  useEffect(() => {
-    if (!imageFile) {
-      return;
-    }
-
-    const newObjectUrl = URL.createObjectURL(imageFile);
-    setImagePreview(newObjectUrl);
-
-    return () => {
-      URL.revokeObjectURL(newObjectUrl);
-    };
-  }, [imageFile]);
-
-  // 유효성 검사 로직
   useEffect(() => {
     if (username === '') return;
     setIsUsernameValid(username.length >= 2 && username.length <= 10);
@@ -76,12 +79,19 @@ function ProfileEditPage() {
     setIsAccountIdValid(regex.test(accountId));
   }, [accountId]);
 
-  // 이벤트 핸들러
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setImageFile(file);
+    if (!file) {
+      setImageFile(null);
+      setPreview(null);
+      return;
     }
+    setImageFile(file);
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setPreview(reader.result);
+    };
   };
 
   const handleSave = async () => {
@@ -89,7 +99,8 @@ function ProfileEditPage() {
 
     const API_URL = 'https://dev.wenivops.co.kr/services/mandarin';
     const token = localStorage.getItem('token');
-    let finalImageUrl = imagePreview;
+
+    let finalImageUrl = profile ? profile.image : '';
 
     if (imageFile) {
       const imageUploadUrl = `${API_URL}/image/uploadfile`;
@@ -111,12 +122,7 @@ function ProfileEditPage() {
     }
 
     const requestBody = {
-      user: {
-        username,
-        accountname: accountId,
-        intro,
-        image: finalImageUrl,
-      },
+      user: { username, accountname: accountId, intro, image: finalImageUrl },
     };
 
     try {
@@ -147,7 +153,9 @@ function ProfileEditPage() {
     }
   };
 
-  // JSX 렌더링
+  const finalImageSrc =
+    preview || (profile && profile.image) || basicProfileImageUrl;
+
   return (
     <div className={styles.pageContainer}>
       <Header
@@ -163,7 +171,7 @@ function ProfileEditPage() {
             onClick={() => fileInputRef.current.click()}
           >
             <img
-              src={imagePreview}
+              src={finalImageSrc}
               alt="프로필 이미지"
               className={styles.profileImage}
               onError={(e) => {
