@@ -1,0 +1,20 @@
+.viewHeader {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 9px 16px;
+  border-bottom: 1px solid #dbdbdb;
+}
+
+.toggleButton {
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.toggleButton img {
+  width: 26px;
+  height: 26px;
+}
