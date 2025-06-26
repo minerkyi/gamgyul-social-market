@@ -112,8 +112,9 @@ function ProfileEditPage() {
           body: formData,
         });
         const data = await res.json();
-        if (data.filename) {
-          finalImageUrl = `https://dev.wenivops.co.kr/services/mandarin/${data.filename}`;
+
+        if (data.info && data.info.filename) {
+          finalImageUrl = `https://dev.wenivops.co.kr/services/mandarin/${data.info.filename}`;
         }
       } catch (error) {
         console.error('이미지 업로드 실패:', error);
@@ -153,8 +154,19 @@ function ProfileEditPage() {
     }
   };
 
+  const isValidImageUrl = (url) => {
+    return (
+      typeof url === 'string' &&
+      url.trim() !== '' &&
+      !url.startsWith('blob:') &&
+      /^https?:\/\/.+/.test(url)
+    );
+  };
+
   const finalImageSrc =
-    preview || (profile && profile.image) || basicProfileImageUrl;
+    preview ||
+    (profile && isValidImageUrl(profile.image) && profile.image) ||
+    basicProfileImageUrl;
 
   return (
     <div className={styles.pageContainer}>
@@ -174,6 +186,7 @@ function ProfileEditPage() {
               src={finalImageSrc}
               alt="프로필 이미지"
               className={styles.profileImage}
+              crossOrigin="anonymous"
               onError={(e) => {
                 e.target.src = basicProfileImageUrl;
               }}

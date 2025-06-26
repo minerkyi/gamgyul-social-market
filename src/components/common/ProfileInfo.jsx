@@ -35,6 +35,7 @@ function ProfileInfo({
           <img
             src={isHttpUrl ? image : basicProfileImageUrl}
             alt={`${name}의 프로필`}
+            crossOrigin="anonymous"
             onError={handleImageError}
           />
         </div>
