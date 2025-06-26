@@ -1,15 +1,28 @@
-import { createContext } from "react";
-import { useLocation } from "react-router-dom";
+import { createContext } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const FooterContext = createContext(false);
 
-export const FooterProvider = ({children}) => {
+export const FooterProvider = ({ children }) => {
   const location = useLocation();
   const path = location.pathname;
-  const isVisibled = path === '/profile';
+
+  const visiblePathPatterns = [
+    '/',
+    '/products',
+    '/profile',
+    '/chat',
+    '/followers',
+    '/followings',
+  ];
+
+  const isVisibled = visiblePathPatterns.some((pattern) => {
+    if (pattern === '/') return path === '/';
+    return path.startsWith(pattern);
+  });
 
   return (
-    <FooterContext.Provider value={{isVisibled, path}}>
+    <FooterContext.Provider value={{ isVisibled, path }}>
       {children}
     </FooterContext.Provider>
   );

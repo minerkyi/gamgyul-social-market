@@ -1,0 +1,66 @@
+.profileContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 16px 26px;
+}
+
+.profileInfo {
+  display: flex;
+  align-items: center;
+  gap: 40px; /*팔로워 이미지 팔로잉 사이 간격*/
+  margin-bottom: 16px;
+}
+
+.followCount {
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  color: #767676;
+}
+
+.followCount strong {
+  display: block;
+  font-size: 18px;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 6px;
+}
+
+.followCount span {
+  font-size: 8px;
+  color: #767676;
+}
+
+.followings strong {
+  color: #767676;
+}
+
+.profileImageWrapper {
+  width: 110px;
+  height: 110px;
+}
+
+.profileImageWrapper img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profileName {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.profileId {
+  font-size: 12px;
+  color: #767676;
+  margin-bottom: 16px;
+}
+
+.profileIntro {
+  font-size: 14px;
+  color: #767676;
+}

@@ -1,0 +1,45 @@
+.actionWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.iconButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid #dbdbdb;
+  border-radius: 50%;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.iconButton img {
+  width: 20px;
+  height: 20px;
+}
+
+/* 팔로우중일때 */
+.followButton {
+  width: 120px;
+  height: 34px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  background-color: #f26e22;
+  cursor: pointer;
+}
+
+/* 언팔로우때 */
+.followButton.followed {
+  color: #767676;
+  border: 1px solid #dbdbdb;
+  background-color: #fff;
+}
