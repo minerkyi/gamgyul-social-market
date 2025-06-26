@@ -1,0 +1,56 @@
+.storeContainer {
+  padding: 20px 0;
+  border-top: 1px solid #dbdbdb;
+  border-bottom: 1px solid #dbdbdb;
+}
+
+.storeTitle {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0 16px 16px 16px;
+}
+
+.productList {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0 16px;
+  /* 스크롤바를 숨기는 CSS 코드 */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* 스크롤바를 숨기는 CSS 코드 (Chrome, Safari, Opera) */
+.productList::-webkit-scrollbar {
+  display: none;
+}
+
+.productImageWrapper {
+  width: 140px;
+  height: 90px;
+  border: 1px solid #dbdbdb;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.productImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.productName {
+  font-size: 14px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.productPrice {
+  font-size: 12px;
+  font-weight: bold;
+  color: #f26e22;
+}

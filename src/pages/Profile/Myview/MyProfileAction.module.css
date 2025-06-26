@@ -1,0 +1,25 @@
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.profileButton {
+  display: inline-block;
+  width: 120px;
+  height: 34px;
+  line-height: 34px;
+  text-align: center;
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 500;
+  color: #767676;
+  border: 1px solid #dbdbdb;
+  border-radius: 30px;
+  background-color: #fff;
+  cursor: pointer;
+
+  box-sizing: border-box;
+}
