@@ -41,9 +41,9 @@ function ProfileStore({ products, onProductClick }) {
         {products.map((product) => (
           <ProductItem
             key={product.id}
-            name={product.name}
+            name={product.itemName}
             price={product.price}
-            image={product.image}
+            image={product.itemImage}
             onProductClick={() => onProductClick(product)}
           />
         ))}
