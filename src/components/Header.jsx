@@ -1,5 +1,4 @@
-import React, { useContext } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styles from './Header.module.css';
 import iconSearch from '../assets/icon/icon-search.png';
 import iconArrow from '../assets/icon/icon-arrow-left.png';
@@ -8,12 +7,13 @@ import iconMore from '../assets/icon/icon-more-vertical.png';
 export default function Header(props) {
 
   const {title, type, onClick, disabled = false} = props;
+  const navigate = useNavigate();
 
   if(type === 'products') {
     return (
       <header className={styles.header}>
-        <button className={styles["back-button"]} onClick={() => {history.back();}}>
-          <img src={iconArrow} alt="" />
+        <button className={styles["back-button"]} onClick={() => navigate(-1)}>
+          <img src={iconArrow} alt="뒤로가기" />
         </button>
         <h1 className={`${styles["header-title"]} sr-only`}>{title}</h1>
         <button className={styles["save-button"]} onClick={onClick} disabled={disabled}>저장</button>
@@ -22,16 +22,25 @@ export default function Header(props) {
   } else if(type === 'profile') {
     return (
       <header className={styles.header}>
-        <button className={styles["back-button"]} onClick={() => {history.back();}}>   
+        <button className={styles["back-button"]} onClick={() => navigate(-1)}>   
           <img src={iconArrow} alt="뒤로가기" />
         </button>
-        <h1 className={`styles["header-title"] sr-only`}>{title}</h1>
+        <h1 className={`${styles["header-title"]} sr-only`}>{title}</h1>
         <button className={styles["empty-button"]} onClick={onClick}>
           <img src={iconMore} alt="더 보기" />
         </button>
       </header>
     );
-  }else {
+  } else if(type === 'title-with-back') {
+    return (
+      <header className={styles.header}>
+        <button className={styles['back-button']} onClick={() => navigate(-1)}>
+          <img src={iconArrow} alt="뒤로가기" />
+        </button>
+        <h1 className={styles['header-title']}>{title}</h1>
+      </header>
+    );
+  } else {
     return (
       <header className={styles.header}>
         <h1 className={styles["header-title"]}>{title}</h1>

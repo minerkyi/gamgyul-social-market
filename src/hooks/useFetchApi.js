@@ -7,18 +7,14 @@ export const useFetchApi = (path, options) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   
-  const fetchData = async (body = null) => {
-    if(!path) return;
+  const fetchData = useCallback(async (newPath = path, newOptions = options) => {
+    if(!newPath) return;
 
     try {
       setIsLoading(true);
-      setIsError(null);
+      setIsError(false);
 
-      let newOption = {...options};
-      if(body) {
-        newOption = {...options, body};
-      }
-      const response = await fetch(url + path, newOption);
+      const response = await fetch(url + newPath, newOptions);
       const data = await response.json();
 
       if(!response.ok) {
@@ -35,7 +31,7 @@ export const useFetchApi = (path, options) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  return [fetchData, result, isLoading, isError];
+  return {result, isLoading, isError, fetchData};
 };

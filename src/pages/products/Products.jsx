@@ -16,15 +16,7 @@ export default function Products() {
   const [disabled, setDisabled] = useState(true);
   
   const token = localStorage.getItem('token');
-  const [fetchImg, result, isLoading, isError] = useFetchApi('/image/uploadfile', {method: 'POST'});
-  const [fetchProduct] = useFetchApi('/product',
-    {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-type': 'application/json'
-      }
-    });
+  const {fetchData} = useFetchApi();
 
   const handleImgUpload = () => {
     fileInputRef.current.click();
@@ -79,11 +71,13 @@ export default function Products() {
       const formData = new FormData();
       formData.append('image', seletedImg);
       let filename = image;
+      let [data, isError] = [null, null];
 
+      console.log(image);
       if(!image) {
-        const [data, isErrorUpload] = await fetchImg(formData);
+        [data, isError] = await fetchData('/image/uploadfile', {method: 'POST', body: formData});
 
-        if(isErrorUpload) {
+        if(isError) {
           alert(data.message);
           return;
         }
@@ -95,16 +89,23 @@ export default function Products() {
       }
 
       if(filename || image) {
-        const [dataProduct, isErrorProduct] = await fetchProduct(JSON.stringify({
-          'product': {
-            itemName,
-            price: Number(price),
-            link,
-            itemImage: filename
-          }
-        }));
+        [data, isError] = await fetchData('/product', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-type': 'application/json'
+          },
+          body: JSON.stringify({
+              'product': {
+                itemName,
+                price: Number(price),
+                link,
+                itemImage: filename
+              }
+            })
+        });
 
-        if(isErrorProduct) {
+        if(isError) {
           alert(data.message);
           return;
         } else {
