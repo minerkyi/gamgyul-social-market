@@ -100,7 +100,7 @@ export default function Products() {
                 itemName,
                 price: Number(price),
                 link,
-                itemImage: filename
+                itemImage: `https://dev.wenivops.co.kr/services/mandarin/${filename}`
               }
             })
         });
