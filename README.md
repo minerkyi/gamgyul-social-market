@@ -80,8 +80,6 @@
 - git clone https://github.com/minerkyi/gamgyul-social-market
 - cd gamgyul-social-market
 - npm install
-- npm install react-router-dom
-- npm i styled-reset
 - npm run dev
 
 ### 2.3 코딩 컨벤션
@@ -284,7 +282,12 @@ function processUserData(userData) {
 
   | URL                          | Note                            |
   |------------------------------|---------------------------------|
-  | /user/login                  | 로그인                           |  
+  | /product/create              | 상품 등록                        |
+  | /product/update/:product_id  | 상품 수정                        |
+  | /post/create                 | 게시글 작성                      |
+  | /profile                     | 프로필                          |
+  | /profile/edit                | 프로필 수정                      |
+  | /profile/:accountname        | 프로필 상세                     |
 
 ## 3. 요구사항 명세와 기능 명세
 - 
