@@ -45,3 +45,38 @@
 .menuButton:hover {
   background-color: #f5f5f5;
 }
+
+/* 로그아웃, 게시글삭제, 상품삭제 모달 */
+
+.confirmModal {
+  padding: 22px 0;
+  text-align: center;
+}
+
+.confirmModal p {
+  margin-bottom: 22px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.confirmButtons {
+  border-top: 0.5px solid var(--border-color);
+  display: flex;
+}
+
+.confirmButtons button {
+  width: 50%;
+  padding: 14px 0;
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.confirmButtons button:first-child {
+  border-right: 0.5px solid var(--border-color);
+  color: var(--text-color-2);
+}
+
+.logoutConfirmButton {
+  color: var(--main-color);
+}

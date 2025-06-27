@@ -76,7 +76,9 @@ function ProfileEditPage() {
   useEffect(() => {
     if (accountId === '') return;
     const regex = /^[a-zA-Z0-9_.]+$/;
-    setIsAccountIdValid(regex.test(accountId));
+    const isValidFormat = regex.test(accountId);
+    const isValidLength = accountId.length >= 5 && accountId.length <= 20;
+    setIsAccountIdValid(isValidFormat && isValidLength);
   }, [accountId]);
 
   const handleImageChange = (e) => {
@@ -206,12 +208,13 @@ function ProfileEditPage() {
               onChange={(e) => setUsername(e.target.value)}
               id="username"
               type="text"
-              placeholder="2~10자 이내"
+              placeholder="2~10자 이내여야 합니다."
             />
-            {!isUsernameValid && (
+            {username && !isUsernameValid && (
               <p className={styles.errorMessage}>* 2~10자 이내여야 합니다.</p>
             )}
           </div>
+
           <div className={styles.inputGroup}>
             <label htmlFor="accountId">계정 ID</label>
             <input
@@ -219,11 +222,12 @@ function ProfileEditPage() {
               onChange={(e) => setAccountId(e.target.value)}
               id="accountId"
               type="text"
-              placeholder="영문, 숫자, 밑줄, 마침표"
+              placeholder="영문, 숫자, 특수문자(.),(_)만 사용 가능합니다."
             />
-            {!isAccountIdValid && (
+            {accountId && !isAccountIdValid && (
               <p className={styles.errorMessage}>
-                * 영문, 숫자, 밑줄, 마침표만 사용할 수 있습니다.
+                * 영문, 숫자, 밑줄, 마침표만 사용할 수 있습니다. 5~20자 이내여야
+                합니다.
               </p>
             )}
           </div>

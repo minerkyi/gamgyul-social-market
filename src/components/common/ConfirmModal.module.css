@@ -1,0 +1,48 @@
+.confirmModal {
+  padding-top: 22px;
+}
+
+.message {
+  padding: 0 26px;
+  margin: 0;
+  margin-bottom: 22px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: center;
+  border-bottom: 0.5px solid var(--border-color);
+}
+
+.buttons {
+  display: flex;
+  margin: 0;
+  overflow: hidden;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.buttons button {
+  flex: 1;
+  padding: 14px 0;
+  font-size: 14px;
+  line-height: 18px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.buttons button:first-child {
+  color: var(--text-color-2);
+  border-right: 0.5px solid #dbdbdb;
+  border-top: 0.5px solid #dbdbdb;
+}
+
+.buttons button:last-child {
+  border-bottom-right-radius: 10px;
+  border-top: 0.5px solid #dbdbdb;
+}
+
+.confirmButton {
+  color: var(--main-color);
+  font-weight: 500;
+}

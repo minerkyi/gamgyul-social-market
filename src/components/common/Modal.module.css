@@ -11,10 +11,33 @@
   z-index: 1000;
 }
 
+.centerAlign {
+  align-items: center;
+}
+
 .modalContent {
   width: 100%;
   background-color: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.confirmationDialog {
+  max-width: 252px;
+  border-radius: 10px;
+}
+
+/* 모달창에 버튼 2개일때 */
+.settingsModal {
+  max-width: none;
+  height: 138px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 모달창에 버튼 3개일때 */
+.productModal {
+  max-width: none;
+  height: 184px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 }
