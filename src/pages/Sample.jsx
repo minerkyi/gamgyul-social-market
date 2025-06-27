@@ -29,7 +29,9 @@ export default function Sample() {
     if(!isError) {
       setToken(data.token);
       localStorage.setItem('token', data.token);
-      console.log(data.token);
+      localStorage.setItem('accountname', data.accountname);
+      localStorage.setItem('profileimage', data.image);
+      console.log(data);
     }
   }
 
