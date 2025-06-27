@@ -18,8 +18,9 @@ function App() {
     <BrowserRouter basename="/gamgyul-social-market">
       <Routes>
         <Route path="/" element={<Index />} />
-        <Route path="/products" element={<Products />} />
-        <Route path="/createpost" element={<CreatePost />} />
+        <Route path="/product/create" element={<Products />} />
+        <Route path="/product/update/:id" element={<Products />} />
+        <Route path="/post/create" element={<CreatePost />} />
         <Route path="/sample" element={<Sample />} />
 
         <Route path="/profile" element={<ProfilePage />} />
