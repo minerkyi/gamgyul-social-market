@@ -1,0 +1,51 @@
+.login-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-family: 'SpoqaHanSansNeo-Regular', sans-serif;
+  background-color: var(--main-color);
+  overflow: hidden;
+}
+
+.logo {
+  margin: 204px auto 177px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 390px;
+  padding: 50px 34px 160px;
+  gap: 10px;
+  background-color: #fff;
+  border-radius: 20px 20px 0 0;
+}
+
+.email-login {
+  margin-top: 10px;
+}
+
+.email-btn,
+.signup-btn {
+  font-family: 'SpoqaHanSansNeo-Regular', sans-serif;
+  padding: 0 12px;
+  color: var(--text-sub-color);
+  font-size: 12px;
+  font-weight: 400;
+  border: none;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.signup-btn {
+  border-left: 1px solid #c4c4c4;
+  cursor: pointer;
+}
+
+
+
+
