@@ -1,0 +1,28 @@
+.input-field {
+    width: 322px;
+    height: 48px;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    font-size: 16px;
+}
+
+.input-validation {
+    color: #eb5757;
+    font-family: "Spoqa Han Sans Neo";
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 14px;
+}
+
+.label {
+    color: var(--text-sub-color);
+    font-family: "Spoqa Han Sans Neo";
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.inputWrapper {
+    display: flex;
+    flex-direction: column;
+}
