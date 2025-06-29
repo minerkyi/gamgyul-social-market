@@ -16,7 +16,7 @@ import LoginMain from './pages/login/LoginMain';
 import EmailLoginPage from './pages/login/EmailLoginPage'; 
 import SignupPage from './pages/login/SignupPage';
 import SignupProfilePage from './pages/login/SignupProfilePage';
-import { UserProvider } from './contexts/UserProvider';
+import { UserProvider } from './contexts/userContext';
 
 function App() {
   return (
