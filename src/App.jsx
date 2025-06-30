@@ -5,6 +5,8 @@ import Index from './pages/Index';
 import Products from './pages/products/Products';
 import Sample from './pages/Sample';
 
+import ChatListPage from './pages/Chat/ChatListPage';
+import MessageRoom from './pages/Chat/MessageRoom';
 import FollowListPage from './pages/Profile/FollowListPage';
 import ProfileEditPage from './pages/Profile/ProfileEditPage';
 import ProfilePage from './pages/Profile/ProfilePage';
@@ -31,6 +33,8 @@ function App() {
           path="/profile/:accountname/followings"
           element={<FollowListPage />}
         />
+        <Route path="/chat" element={<ChatListPage />} />
+        <Route path="/chat/:chatId" element={<MessageRoom />} />
 
         <Route path="*" element={<Page404 />} />
       </Routes>

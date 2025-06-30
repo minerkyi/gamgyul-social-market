@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import actionSheetStyles from '../../components/common/ActionSheet.module.css';
 import modalStyles from '../../components/common/Modal.module.css';
 import styles from './ProfilePage.module.css';
 
@@ -38,8 +39,6 @@ function ProfilePage() {
       const targetAccountname = isMyProfile ? myAccountname : accountname;
 
       if (!targetAccountname) {
-        console.error('계정 정보가 없어 데이터를 조회할 수 없습니다.');
-        alert('계정 정보가 없습니다.');
         navigate('/');
         return;
       }
@@ -232,25 +231,25 @@ function ProfilePage() {
         onClose={() => setIsProductModalOpen(false)}
         className={modalStyles.productModal}
       >
-        <div className={styles.actionSheet}>
-          <div className={styles.handle}></div>
-          <ul className={styles.menuList}>
+        <div className={actionSheetStyles.actionSheet}>
+          <div className={actionSheetStyles.handle}></div>
+          <ul className={actionSheetStyles.menuList}>
             <li>
               <button
                 type="button"
-                className={styles.menuButton}
+                className={actionSheetStyles.menuButton}
                 onClick={handleOpenDeleteProductConfirm}
               >
                 삭제
               </button>
             </li>
             <li>
-              <button type="button" className={styles.menuButton}>
+              <button type="button" className={actionSheetStyles.menuButton}>
                 수정
               </button>
             </li>
             <li>
-              <button type="button" className={styles.menuButton}>
+              <button type="button" className={actionSheetStyles.menuButton}>
                 웹사이트에서 상품 보기
               </button>
             </li>
@@ -263,18 +262,18 @@ function ProfilePage() {
         onClose={() => setIsSettingsModalOpen(false)}
         className={modalStyles.settingsModal}
       >
-        <div className={styles.actionSheet}>
-          <div className={styles.handle}></div>
-          <ul className={styles.menuList}>
+        <div className={actionSheetStyles.actionSheet}>
+          <div className={actionSheetStyles.handle}></div>
+          <ul className={actionSheetStyles.menuList}>
             <li>
-              <button type="button" className={styles.menuButton}>
+              <button type="button" className={actionSheetStyles.menuButton}>
                 설정 및 개인정보
               </button>
             </li>
             <li>
               <button
                 type="button"
-                className={styles.menuButton}
+                className={actionSheetStyles.menuButton}
                 onClick={handleOpenLogoutConfirm}
               >
                 로그아웃
@@ -289,20 +288,20 @@ function ProfilePage() {
         onClose={() => setIsPostModalOpen(false)}
         className={modalStyles.settingsModal}
       >
-        <div className={styles.actionSheet}>
-          <div className={styles.handle}></div>
-          <ul className={styles.menuList}>
+        <div className={actionSheetStyles.actionSheet}>
+          <div className={actionSheetStyles.handle}></div>
+          <ul className={actionSheetStyles.menuList}>
             <li>
               <button
                 type="button"
-                className={styles.menuButton}
+                className={actionSheetStyles.menuButton}
                 onClick={handleOpenDeletePostConfirm}
               >
                 삭제
               </button>
             </li>
             <li>
-              <button type="button" className={styles.menuButton}>
+              <button type="button" className={actionSheetStyles.menuButton}>
                 수정
               </button>
             </li>

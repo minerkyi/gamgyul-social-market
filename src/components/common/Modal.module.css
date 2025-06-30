@@ -26,6 +26,14 @@
   border-radius: 10px;
 }
 
+/* 모달창 버튼 1개일때 */
+.leaveChatModal {
+  max-width: none;
+  height: 92px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
 /* 모달창에 버튼 2개일때 */
 .settingsModal {
   max-width: none;
