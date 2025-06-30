@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import styles from './MessageInput.module.css';
 
-const iconUploadUrl = new URL(
-  '../../assets/icon/icon-upload.png',
-  import.meta.url
-).href;
+const iconUploadUrl = new URL('../../assets/img-button.png', import.meta.url)
+  .href;
 
 function MessageInput() {
   const [message, setMessage] = useState('');
