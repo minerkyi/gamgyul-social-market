@@ -11,6 +11,7 @@ function EmailLoginPage() {
   const { saveUser } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
 
   const { fetchData } = useFetchApi();
 
@@ -40,9 +41,11 @@ function EmailLoginPage() {
 
     if (!isErr) {
       saveUser(data);
+      setLoginError("");
       navigate("/");
+    } else {
+      setLoginError(data.message);
     }
-    // TODO: 로그인 실패시 로직 추가 예정
   };
 
   return (
@@ -63,6 +66,7 @@ function EmailLoginPage() {
             labelText="비밀번호"
             inputId="password"
             onChange={(e) => setPassword(e.target.value)}
+            error={loginError}
           />
           <Button text="로그인" disabled={!email || !password} />
           <button
