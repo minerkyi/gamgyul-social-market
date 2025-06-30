@@ -1,10 +1,16 @@
+.inputWrapper {
+    display: flex;
+    flex-direction: column;
+}
 .input-field {
     width: 322px;
     height: 48px;
     outline: none;
     border: none;
     border-bottom: 1px solid #ccc;
-    font-size: 16px;
+    font-size: 14px;
+    font-weight: 400;
+    padding: 0;
 }
 
 .input-validation {
@@ -20,9 +26,6 @@
     font-family: "Spoqa Han Sans Neo";
     font-size: 12px;
     font-weight: 500;
+    margin-top: 16px;
 }
 
-.inputWrapper {
-    display: flex;
-    flex-direction: column;
-}
