@@ -65,21 +65,48 @@ export default function Post() {
     return rtf.format(-days, 'day');
   };
 
-  const handleReport = () => {
-    console.log('report');
-  };  
-  const handleDelete = () => {
-    console.log('delete');
+  const handleReport = async ({commentId}) => {
+    const [data, isErr] = await fetchData(`/post/${id}/comments/${commentId}/report`, {
+      method: "POST",
+      headers: {
+        "Authorization" : `Bearer ${token}`,
+        "Content-type" : "application/json"
+      }
+    });
+
+    if(isErr) {
+      alert(data.message);
+      return;
+    } else {
+      setIsOpenCommentModal(false);
+    }
+  };
+
+  const handleDelete = async ({commentId}) => {
+    const [data, isErr] = await fetchData(`/post/${id}/comments/${commentId}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization" : `Bearer ${token}`,
+        "Content-type" : "application/json"
+      }
+    });
+
+    if(isErr) {
+      alert(data.message);
+      return;
+    } else {
+      getComments();
+      setIsOpenCommentModal(false);
+    }
   };
   
   const children = [{title:modalTitle, event:modalEvnet}];
-  const hadleCommentMore = (account) => {
-    console.log(account);
-    if(account !== accountname) {
-      setModalEvent(() => handleDelete);
+  const hadleCommentMore = (account, commentId) => {
+    if(account === accountname) {
+      setModalEvent({func:handleDelete, param:{commentId}});
       setModalTitle('삭제');
     } else {
-      setModalEvent(() => handleReport);
+      setModalEvent({handleReport, commentId});
       setModalTitle('신고하기');
     }
     setIsOpenCommentModal(true);
@@ -144,7 +171,7 @@ export default function Post() {
       <Header title="게시글" type="profile" />
       <main className={styles.container}>
         <h2 className="sr-only">게시물 댓글 작성</h2>
-        {postData ? <PostItem data={postData} commentsCount={commentsCount} /> : ''}
+        {postData ? <PostItem data={postData} commentsCount={commentsCount} isComments={true} /> : ''}
         {commentsData.length > 0 ? (
           <section className={styles.comments}>
           {commentsData.map((comment, idx) => (
@@ -160,7 +187,7 @@ export default function Post() {
                 </div>
               </div>
               <button className={styles["empty-button"]}>
-                <img className={styles["comment-image-more"]} src={iconMoreButton} alt="댓글 더 보기 버튼" onClick={() => hadleCommentMore(comment.author.accountname)} />
+                <img className={styles["comment-image-more"]} src={iconMoreButton} alt="댓글 더 보기 버튼" onClick={() => hadleCommentMore(comment.author.accountname, comment.id)} />
               </button>
             </article>
           ))}

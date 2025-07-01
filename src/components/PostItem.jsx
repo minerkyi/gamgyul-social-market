@@ -7,11 +7,12 @@ import iconHeart from '../assets/icon/icon-heart.png';
 import iconHeartActive from '../assets/icon/icon-heart-active.png';
 import iconMessageCircle from '../assets/icon/icon-message-circle.svg';
 import { useFetchApi } from '../hooks/useFetchApi';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import BottomModal from './BottomModal';
 
-export default function PostItem({data, commentsCount = 0}) {
+export default function PostItem({data, isComments = false, commentsCount = 0}) {
 
+  const navigate = useNavigate();
   const {fetchData} = useFetchApi();
   const [postData, setPostData] = useState(data.post);
   const authorData = postData.author;
@@ -30,8 +31,8 @@ export default function PostItem({data, commentsCount = 0}) {
     console.log('Update', postData.id)
   };
   const children = [
-    {title:'삭제', event:handleDelete},
-    {title:'수정', event:handleUpdate}
+    {title:'삭제', event:{handleDelete}},
+    {title:'수정', event:{handleUpdate}}
   ];
 
   const handleHearted = async () => {
@@ -87,6 +88,10 @@ export default function PostItem({data, commentsCount = 0}) {
     }
   }, []);
 
+  const handleComments = (id) => {
+    navigate(`/post/${id}`);
+  }
+
   const images = postData.image.split(',');
 
   return (
@@ -128,7 +133,7 @@ export default function PostItem({data, commentsCount = 0}) {
             <img className={styles["icon-small"]} src={heart} alt="좋아요 개수" />
             <span>{postData.heartCount}</span>
           </button>
-          <button className={styles["action-button"]}>
+          <button className={styles["action-button"]} onClick={isComments ? null : () => handleComments(postData.id)}>
             <img className={styles["icon-small"]} src={iconMessageCircle} alt="댓글 개수" />
             <span>{commentsCount > 0 ? commentsCount : postData.commentCount}</span>
           </button>
