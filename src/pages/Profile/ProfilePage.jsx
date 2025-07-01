@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import actionSheetStyles from '../../components/common/ActionSheet.module.css';
+import modalStyles from '../../components/common/Modal.module.css';
 import styles from './ProfilePage.module.css';
 
 import Footer from '../../components/Footer';
 import Header from '../../components/Header';
+import ConfirmModal from '../../components/common/ConfirmModal';
 import Modal from '../../components/common/Modal';
 
 import PostList from '../../components/ProfileView/PostList';
@@ -19,13 +22,16 @@ function ProfilePage() {
   const [posts, setPosts] = useState([]);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [confirmModalConfig, setConfirmModalConfig] = useState(null);
 
   const { accountname } = useParams();
+  const navigate = useNavigate();
   const myAccountname = localStorage.getItem('accountname');
   const isMyProfile = !accountname || accountname === myAccountname;
 
-  // --- API 데이터 요청 로직 ---
   useEffect(() => {
     const fetchAllData = async () => {
       const API_URL = 'https://dev.wenivops.co.kr/services/mandarin';
@@ -33,8 +39,7 @@ function ProfilePage() {
       const targetAccountname = isMyProfile ? myAccountname : accountname;
 
       if (!targetAccountname) {
-        console.error('계정 정보가 없어 데이터를 조회할 수 없습니다.');
-        setLoading(false);
+        navigate('/');
         return;
       }
 
@@ -55,24 +60,28 @@ function ProfilePage() {
           }),
         ]);
 
+        if (!profileRes.ok) {
+          throw new Error(`프로필 API 요청 실패: ${profileRes.status}`);
+        }
+
         const profileData = await profileRes.json();
         const productData = await productRes.json();
         const postData = await postRes.json();
 
         setProfile(profileData.profile);
-        setProducts(productData.product);
-        setPosts(postData.post);
+        setProducts(productData.product || []);
+        setPosts(postData.post || []);
       } catch (error) {
         console.error('데이터를 불러오는 중 오류 발생:', error);
+        setProfile(null);
       } finally {
         setLoading(false);
       }
     };
 
     fetchAllData();
-  }, [accountname, myAccountname]);
+  }, [accountname, myAccountname, isMyProfile, navigate]);
 
-  // --- 이벤트 핸들러 함수 ---
   const handleOpenProductModal = (product) => {
     setSelectedProduct(product);
     setIsProductModalOpen(true);
@@ -82,44 +91,109 @@ function ProfilePage() {
     setIsSettingsModalOpen(true);
   };
 
-  const handleFollowToggle = async () => {
-    if (!profile) return;
+  const handleOpenPostModal = (post) => {
+    setSelectedPost(post);
+    setIsPostModalOpen(true);
+  };
 
-    const targetAccountname = profile.accountname;
-    const isFollowing = profile.isfollow;
+  const handleConfirmLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('accountname');
+    navigate('/login');
+  };
 
+  const handleOpenLogoutConfirm = () => {
+    setIsSettingsModalOpen(false);
+    setConfirmModalConfig({
+      message: '로그아웃하시겠어요?',
+      confirmText: '로그아웃',
+      onConfirm: handleConfirmLogout,
+    });
+  };
+
+  const handleConfirmDeleteProduct = async () => {
+    if (!selectedProduct) return;
     const API_URL = 'https://dev.wenivops.co.kr/services/mandarin';
     const token = localStorage.getItem('token');
-
-    const requestUrl = `${API_URL}/profile/${targetAccountname}/${
-      isFollowing ? 'unfollow' : 'follow'
-    }`;
-    const method = isFollowing ? 'DELETE' : 'POST';
-
+    const requestUrl = `${API_URL}/product/${selectedProduct.id}`;
     try {
       const response = await fetch(requestUrl, {
-        method: method,
+        method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          'Content-type': 'application/json',
         },
       });
-
-      if (!response.ok) {
-        throw new Error('팔로우/언팔로우 API 요청 실패');
-      }
-
       const data = await response.json();
-      setProfile(data.profile);
+      if (response.ok) {
+        alert('상품이 삭제되었습니다.');
+        setProducts(products.filter((p) => p.id !== selectedProduct.id));
+        setConfirmModalConfig(null);
+      } else {
+        throw new Error(data.message || '상품 삭제에 실패했습니다.');
+      }
     } catch (error) {
-      console.error(error);
+      console.error('상품 삭제 처리 중 오류:', error);
+      alert(error.message);
+      setConfirmModalConfig(null);
     }
   };
 
-  if (loading) return <div>로딩 중...</div>;
+  const handleOpenDeleteProductConfirm = () => {
+    setIsProductModalOpen(false);
+    setConfirmModalConfig({
+      message: '상품을 삭제할까요?',
+      confirmText: '삭제',
+      onConfirm: handleConfirmDeleteProduct,
+    });
+  };
+
+  const handleConfirmDeletePost = async () => {
+    if (!selectedPost) return;
+
+    const API_URL = 'https://dev.wenivops.co.kr/services/mandarin';
+    const token = localStorage.getItem('token');
+    const requestUrl = `${API_URL}/post/${selectedPost.id}`;
+
+    try {
+      const response = await fetch(requestUrl, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        alert('게시글이 삭제되었습니다.');
+        setPosts(posts.filter((p) => p.id !== selectedPost.id));
+        setConfirmModalConfig(null);
+      } else {
+        throw new Error(data.message || '게시글 삭제에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('게시글 삭제 처리 중 오류:', error);
+      alert(error.message);
+      setConfirmModalConfig(null);
+    }
+  };
+
+  const handleOpenDeletePostConfirm = () => {
+    setIsPostModalOpen(false);
+    setConfirmModalConfig({
+      message: '게시글을 삭제할까요?',
+      confirmText: '삭제',
+      onConfirm: handleConfirmDeletePost,
+    });
+  };
+
+  const handleFollowToggle = async () => {
+    if (!profile) return;
+  };
+
+  if (loading) return null;
   if (!profile) return <div>프로필 정보를 불러올 수 없습니다.</div>;
 
-  // --- 최종 렌더링 ---
   return (
     <div className={styles.pageContainer}>
       <div className={styles.headerWrapper}>
@@ -135,7 +209,6 @@ function ProfilePage() {
           followerCount={profile.followerCount}
           followingCount={profile.followingCount}
         />
-
         {isMyProfile ? (
           <MyProfileAction />
         ) : (
@@ -144,37 +217,39 @@ function ProfilePage() {
             onFollowToggle={handleFollowToggle}
           />
         )}
-
         <ProfileStore
           products={products}
           onProductClick={handleOpenProductModal}
         />
-
-        <PostList posts={posts} />
+        <PostList posts={posts} onMoreClick={handleOpenPostModal} />
       </main>
 
       <Footer />
 
-      {/* 상품 메뉴 모달 */}
       <Modal
         isOpen={isProductModalOpen}
         onClose={() => setIsProductModalOpen(false)}
+        className={modalStyles.productModal}
       >
-        <div className={styles.actionSheet}>
-          <div className={styles.handle}></div>
-          <ul className={styles.menuList}>
+        <div className={actionSheetStyles.actionSheet}>
+          <div className={actionSheetStyles.handle}></div>
+          <ul className={actionSheetStyles.menuList}>
             <li>
-              <button type="button" className={styles.menuButton}>
+              <button
+                type="button"
+                className={actionSheetStyles.menuButton}
+                onClick={handleOpenDeleteProductConfirm}
+              >
                 삭제
               </button>
             </li>
             <li>
-              <button type="button" className={styles.menuButton}>
+              <button type="button" className={actionSheetStyles.menuButton}>
                 수정
               </button>
             </li>
             <li>
-              <button type="button" className={styles.menuButton}>
+              <button type="button" className={actionSheetStyles.menuButton}>
                 웹사이트에서 상품 보기
               </button>
             </li>
@@ -182,27 +257,67 @@ function ProfilePage() {
         </div>
       </Modal>
 
-      {/* 설정 및 로그아웃 모달 */}
       <Modal
         isOpen={isSettingsModalOpen}
         onClose={() => setIsSettingsModalOpen(false)}
+        className={modalStyles.settingsModal}
       >
-        <div className={styles.actionSheet}>
-          <div className={styles.handle}></div>
-          <ul className={styles.menuList}>
+        <div className={actionSheetStyles.actionSheet}>
+          <div className={actionSheetStyles.handle}></div>
+          <ul className={actionSheetStyles.menuList}>
             <li>
-              <button type="button" className={styles.menuButton}>
+              <button type="button" className={actionSheetStyles.menuButton}>
                 설정 및 개인정보
               </button>
             </li>
             <li>
-              <button type="button" className={styles.menuButton}>
+              <button
+                type="button"
+                className={actionSheetStyles.menuButton}
+                onClick={handleOpenLogoutConfirm}
+              >
                 로그아웃
               </button>
             </li>
           </ul>
         </div>
       </Modal>
+
+      <Modal
+        isOpen={isPostModalOpen}
+        onClose={() => setIsPostModalOpen(false)}
+        className={modalStyles.settingsModal}
+      >
+        <div className={actionSheetStyles.actionSheet}>
+          <div className={actionSheetStyles.handle}></div>
+          <ul className={actionSheetStyles.menuList}>
+            <li>
+              <button
+                type="button"
+                className={actionSheetStyles.menuButton}
+                onClick={handleOpenDeletePostConfirm}
+              >
+                삭제
+              </button>
+            </li>
+            <li>
+              <button type="button" className={actionSheetStyles.menuButton}>
+                수정
+              </button>
+            </li>
+          </ul>
+        </div>
+      </Modal>
+
+      {confirmModalConfig && (
+        <ConfirmModal
+          isOpen={!!confirmModalConfig}
+          onClose={() => setConfirmModalConfig(null)}
+          message={confirmModalConfig.message}
+          confirmText={confirmModalConfig.confirmText}
+          onConfirm={confirmModalConfig.onConfirm}
+        />
+      )}
     </div>
   );
 }
