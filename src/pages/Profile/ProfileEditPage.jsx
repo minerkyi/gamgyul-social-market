@@ -1,73 +1,216 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Header from '../../components/Header';
 import styles from './ProfileEditPage.module.css';
 
-import basicProfileImage from '../../assets/basic-profile-img.png';
-import Header from '../../components/Header';
-
 function ProfileEditPage() {
-  //나중에 state 로 관리될 데이터
-  const [username, setUsername] = useState('애월읍 위니브 감귤농장');
-  const [accountId, setAccountId] = useState('weniv_Mandarin');
-  const [intro, setIntro] = useState(
-    '애월읍 감귤 전국 배송, 귤따기 체험, 감귤 농장'
-  );
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
+
+  const [profile, setProfile] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+
+  const [username, setUsername] = useState('');
+  const [accountId, setAccountId] = useState('');
+  const [intro, setIntro] = useState('');
 
   const [isUsernameValid, setIsUsernameValid] = useState(true);
   const [isAccountIdValid, setIsAccountIdValid] = useState(true);
+  const isFormValid =
+    isUsernameValid && isAccountIdValid && username && accountId;
 
-  const isFormValid = isUsernameValid && isAccountIdValid;
+  const basicProfileImageUrl = new URL(
+    '../../assets/basic-profile-img.png',
+    import.meta.url
+  ).href;
 
-  // 유저네임 유효성
   useEffect(() => {
-    if (username.length >= 2 && username.length <= 10) {
-      setIsUsernameValid(true);
-    } else {
-      setIsUsernameValid(false);
-    }
+    const fetchCurrentProfile = async () => {
+      try {
+        const API_URL = 'https://dev.wenivops.co.kr/services/mandarin';
+        const token = localStorage.getItem('token');
+        const myAccountname = localStorage.getItem('accountname');
+
+        if (!token || !myAccountname) {
+          console.error('로그인 정보가 없습니다. 로그인 페이지로 이동합니다.');
+          alert('로그인 정보가 없습니다. 다시 로그인해주세요.');
+          navigate('/');
+          return;
+        }
+
+        const response = await fetch(`${API_URL}/profile/${myAccountname}`, {
+          method: 'GET',
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!response.ok) {
+          throw new Error('프로필 정보를 불러오는 데 실패했습니다.');
+        }
+
+        const data = await response.json();
+        const profileData = data.profile;
+
+        if (!profileData) {
+          throw new Error('서버로부터 받은 프로필 데이터가 올바르지 않습니다.');
+        }
+
+        setProfile(profileData);
+        setUsername(profileData.username);
+        setAccountId(profileData.accountname);
+        setIntro(profileData.intro);
+      } catch (error) {
+        console.error(error);
+        alert('프로필 정보를 가져오는 중 문제가 발생했습니다.');
+        navigate('/profile');
+      }
+    };
+    fetchCurrentProfile();
+  }, [navigate]);
+
+  useEffect(() => {
+    if (username === '') return;
+    setIsUsernameValid(username.length >= 2 && username.length <= 10);
   }, [username]);
 
-  // 계정ID 유효성
   useEffect(() => {
+    if (accountId === '') return;
     const regex = /^[a-zA-Z0-9_.]+$/;
-    if (regex.test(accountId) && accountId.length > 0) {
-      setIsAccountIdValid(true);
-    } else {
-      setIsAccountIdValid(false);
-    }
+    const isValidFormat = regex.test(accountId);
+    const isValidLength = accountId.length >= 5 && accountId.length <= 20;
+    setIsAccountIdValid(isValidFormat && isValidLength);
   }, [accountId]);
 
-  // 저장
-  const handleSave = () => {
-    if (!isFormValid) {
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      setImageFile(null);
+      setPreview(null);
       return;
     }
-    console.log('프로필 저장!', { username, accountId, intro });
+    setImageFile(file);
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setPreview(reader.result);
+    };
   };
+
+  const handleSave = async () => {
+    if (!isFormValid) return;
+
+    const API_URL = 'https://dev.wenivops.co.kr/services/mandarin';
+    const token = localStorage.getItem('token');
+
+    let finalImageUrl = profile ? profile.image : '';
+
+    if (imageFile) {
+      const imageUploadUrl = `${API_URL}/image/uploadfile`;
+      const formData = new FormData();
+      formData.append('image', imageFile);
+      try {
+        const res = await fetch(imageUploadUrl, {
+          method: 'POST',
+          body: formData,
+        });
+        const data = await res.json();
+
+        if (data.info && data.info.filename) {
+          finalImageUrl = `https://dev.wenivops.co.kr/services/mandarin/${data.info.filename}`;
+        }
+      } catch (error) {
+        console.error('이미지 업로드 실패:', error);
+        return;
+      }
+    }
+
+    const requestBody = {
+      user: { username, accountname: accountId, intro, image: finalImageUrl },
+    };
+
+    try {
+      const res = await fetch(`${API_URL}/user`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        if (errorData.message === '이미 사용중인 계정 ID입니다.') {
+          alert('이미 사용중인 계정 ID입니다.');
+          setIsAccountIdValid(false);
+          return;
+        }
+        throw new Error('프로필 수정 실패');
+      }
+
+      const data = await res.json();
+      localStorage.setItem('accountname', data.user.accountname);
+      navigate('/profile');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const isValidImageUrl = (url) => {
+    return (
+      typeof url === 'string' &&
+      url.trim() !== '' &&
+      !url.startsWith('blob:') &&
+      /^https?:\/\/.+/.test(url)
+    );
+  };
+
+  const finalImageSrc =
+    preview ||
+    (profile && isValidImageUrl(profile.image) && profile.image) ||
+    basicProfileImageUrl;
 
   return (
     <div className={styles.pageContainer}>
-      <Header type="products" title="프로필 수정" onClick={handleSave} />
-
+      <Header
+        type="products"
+        title="프로필 수정"
+        disabled={!isFormValid}
+        onClick={handleSave}
+      />
       <main className={styles.mainContent}>
         <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
-          <div className={styles.imageSection}>
+          <div
+            className={styles.imageSection}
+            onClick={() => fileInputRef.current.click()}
+          >
             <img
-              src={basicProfileImage}
-              alt="현재 프로필 이미지"
+              src={finalImageSrc}
+              alt="프로필 이미지"
               className={styles.profileImage}
+              crossOrigin="anonymous"
+              onError={(e) => {
+                e.target.src = basicProfileImageUrl;
+              }}
+            />
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={handleImageChange}
+              style={{ display: 'none' }}
             />
           </div>
-
           <div className={styles.inputGroup}>
             <label htmlFor="username">사용자 이름</label>
             <input
-              type="text"
-              id="username"
-              placeholder="2~10자 이내여야 합니다."
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              id="username"
+              type="text"
+              placeholder="2~10자 이내여야 합니다."
             />
-            {!isUsernameValid && (
+            {username && !isUsernameValid && (
               <p className={styles.errorMessage}>* 2~10자 이내여야 합니다.</p>
             )}
           </div>
@@ -75,27 +218,27 @@ function ProfileEditPage() {
           <div className={styles.inputGroup}>
             <label htmlFor="accountId">계정 ID</label>
             <input
-              type="text"
-              id="accountId"
-              placeholder="영문, 숫자, 특수문자(.),(_)만 사용 가능합니다."
               value={accountId}
               onChange={(e) => setAccountId(e.target.value)}
+              id="accountId"
+              type="text"
+              placeholder="영문, 숫자, 특수문자(.),(_)만 사용 가능합니다."
             />
-            {!isAccountIdValid && (
+            {accountId && !isAccountIdValid && (
               <p className={styles.errorMessage}>
-                * 영문, 숫자, 밑줄, 마침표만 사용할 수 있습니다.
+                * 영문, 숫자, 밑줄, 마침표만 사용할 수 있습니다. 5~20자 이내여야
+                합니다.
               </p>
             )}
           </div>
-
           <div className={styles.inputGroup}>
             <label htmlFor="intro">소개</label>
             <textarea
-              id="intro"
-              placeholder="자신과 판매할 상품에 대해 소개해 주세요!"
               value={intro}
               onChange={(e) => setIntro(e.target.value)}
+              id="intro"
               rows="1"
+              placeholder="자신과 판매할 상품에 대해 소개해 주세요!"
             />
           </div>
         </form>

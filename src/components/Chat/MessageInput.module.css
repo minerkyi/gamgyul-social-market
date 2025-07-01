@@ -1,0 +1,62 @@
+.inputContainer {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 12px;
+  background-color: #fff;
+  border-top: 0.5px solid #dbdbdb;
+}
+
+.imageUploadLabel {
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  border-radius: 50%;
+}
+
+.imageUploadLabel img {
+  width: 36px;
+  height: 36px;
+  opacity: 1;
+  visibility: visible;
+}
+
+.imageUploadInput {
+  display: none;
+}
+
+.textInput {
+  flex-grow: 1;
+  border: none;
+  background-color: transparent;
+  font-size: 14px;
+  padding: 0;
+  min-width: 0;
+}
+
+.textInput::placeholder {
+  color: #c4c4c4;
+}
+
+.textInput:focus {
+  outline: none;
+}
+
+.sendButton {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-size: 14px;
+  color: #c4c4c4;
+}
+
+.sendButton.active {
+  color: #f26e22;
+}
