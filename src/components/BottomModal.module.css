@@ -1,0 +1,54 @@
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 1000;
+}
+
+.modal-content {
+  width: 100%;
+  background-color: #fff;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 모달 내부 */
+.action-sheet {
+  display: flex;
+  flex-direction: column;
+
+  padding-top: 16px;
+}
+
+.handle {
+  width: 50px;
+  height: 4px;
+  background-color: #dbdbdb;
+  border-radius: 2px;
+  margin: 0 auto 16px;
+}
+
+.menu-list {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 10px;
+  list-style: none;
+}
+
+.menu-button {
+  width: 100%;
+  padding: 14px 26px;
+  font-size: 14px;
+  text-align: left;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}

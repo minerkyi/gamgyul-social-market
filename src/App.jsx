@@ -12,6 +12,7 @@ import ProfilePage from './pages/Profile/ProfilePage';
 import Footer from './components/Footer';
 import Page404 from './pages/Page404';
 import CreatePost from './pages/post/CreatePost';
+import Post from './pages/post/Post';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/" element={<Index />} />
         <Route path="/product/create" element={<Products />} />
         <Route path="/product/update/:id" element={<Products />} />
+        <Route path="/post/:id" element={<Post />} />
         <Route path="/post/create" element={<CreatePost />} />
         <Route path="/sample" element={<Sample />} />
 
