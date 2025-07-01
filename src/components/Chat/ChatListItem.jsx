@@ -14,7 +14,14 @@ function ChatListItem({ chat }) {
   const chatRoomPath = `/chat/${id}`;
 
   return (
-    <Link to={chatRoomPath} className={styles.chatLink}>
+    <Link
+      to={chatRoomPath}
+      className={styles.chatLink}
+      state={{
+        userName: userName,
+        profileImage: profileImage,
+      }}
+    >
       <li className={styles.chatItem}>
         <div className={styles.profileImageContainer}>
           <img

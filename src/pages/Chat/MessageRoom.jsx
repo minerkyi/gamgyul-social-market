@@ -53,18 +53,18 @@ function MessageRoom() {
   };
 
   const handleLeaveChat = () => {
-    console.log('채팅방 나가기');
+    console.log('채팅방 나가기 실행');
     setIsLeaveModalOpen(false);
     navigate('/chat');
   };
 
   return (
     <div className={styles.pageContainer}>
-      <Header
-        type="profile"
-        title={chatPartner.userName}
-        onClick={handleOpenLeaveModal}
-      />
+      <div className={styles.headerContainer}>
+        <Header type="profile" onClick={handleOpenLeaveModal} />
+        <h1 className={styles.headerTitle}>{chatPartner.userName}</h1>
+      </div>
+
       <main className={styles.mainContent}>
         {dummyMessage.map((msg) => (
           <div
@@ -102,7 +102,6 @@ function MessageRoom() {
         onClose={() => setIsLeaveModalOpen(false)}
         className={modalStyles.leaveChatModal}
       >
-        {' '}
         <div className={actionSheetStyles.actionSheet}>
           <div className={actionSheetStyles.handle}></div>
           <ul className={actionSheetStyles.menuList}>
