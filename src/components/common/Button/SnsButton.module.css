@@ -1,0 +1,46 @@
+.sns-button {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  width: 322px;
+  height: 44px;
+  padding: 0 16px;
+  box-sizing: border-box;
+  background-color: #fff;
+  border: none;
+  border-radius: 44px;
+  font-family: 'SpoqaHanSansNeo-Regular', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #767676;
+  white-space: nowrap;
+}
+
+.sns-icon {
+  position: absolute;
+  left: 16px;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin-right: 14px;
+  vertical-align: middle;
+}
+
+.sns-text {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+}
+
+.kakao {
+  border: 1px solid #f2c94c;
+}
+
+.google {
+  border: 1px solid #767676;
+}
+
+.facebook {
+  border: 1px solid #2d9cdb;
+}
