@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Header from '../../components/Header';
 import styles from './Products.module.css';
 import { useFetchApi } from '../../hooks/useFetchApi';
+import { useAsyncError, useParams } from 'react-router-dom';
 
 export default function Products() {
   
@@ -9,14 +10,39 @@ export default function Products() {
   const [seletedImg, setSeletedImg] = useState(null);
   const [imgPreview, setImgPreview] = useState(null);
   const [image, setImage] = useState(null);
+
   const [itemName, setItemName] = useState('');
   const [price, setPrice] = useState(0);
   const [displayPrice, setDisplayPrice] = useState('');
-  const [link, setLink] = useState(''); 
+  const [link, setLink] = useState('');
+
   const [disabled, setDisabled] = useState(true);
   
+  const {id} = useParams();
   const token = localStorage.getItem('token');
-  const {fetchData} = useFetchApi();
+  const {fetchData, result} = useFetchApi();
+
+  useEffect(() => {
+    if(id) {
+      const productData = async () => {
+        const [data, isErr] = await fetchData(`/product/detail/${id}`, {
+          method: "GET",
+          headers: {
+            "Authorization" : `Bearer ${token}`,
+            "Content-type" : "application/json"
+          }
+        });
+        
+        const product = data.product;
+        setImgPreview(product.itemImage);
+        setImage(product.itemImage);
+        setItemName(product.itemName);
+        setPrice(product.price);
+        setLink(product.link);
+      }
+      productData();
+    }
+  }, []);
 
   const handleImgUpload = () => {
     fileInputRef.current.click();
@@ -31,7 +57,11 @@ export default function Products() {
       setImgPreview(URL.createObjectURL(file));
     } else {
       setSeletedImg(null);
-      setImgPreview(null);
+      if(result) {
+        setImgPreview(result.product.itemImage);
+      } else {
+        setImgPreview(null);
+      }
     }
   };
 
@@ -45,12 +75,16 @@ export default function Products() {
     let num = 0;
     if(value !== '') {
       num = Number(value.replace(/[^\d]/g, ''));
-      setDisplayPrice(num.toLocaleString());
-    } else {
-      setDisplayPrice(value);
     }
     setPrice(num);
   };
+  useEffect(() => {
+    if(price === 0) {
+      setDisplayPrice('');
+    } else {
+      setDisplayPrice(price.toLocaleString());
+    }
+  }, [price]);
 
   const handleLink = (e) => {
     const value = e.target.value;
@@ -59,7 +93,7 @@ export default function Products() {
 
   useEffect(() => {
     const urlRegex = /^(https?):\/\/(?:www\.)?[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+(?:\/[^\s]*)?$/i;
-    if(itemName !== '' && price > 0 && urlRegex.test(link) && seletedImg) {
+    if(itemName?.length > 1 && price > 0 && urlRegex.test(link) && imgPreview) {
       setDisabled(false);
     } else {
       setDisabled(true);
@@ -67,15 +101,13 @@ export default function Products() {
   }, [itemName, price, link, seletedImg]);
 
   const handleSave = async () => {
+    let filename = image;
     if(seletedImg) {
       const formData = new FormData();
       formData.append('image', seletedImg);
-      let filename = image;
-      let [data, isError] = [null, null];
 
-      console.log(image);
       if(!image) {
-        [data, isError] = await fetchData('/image/uploadfile', {method: 'POST', body: formData});
+        const [data, isError] = await fetchData('/image/uploadfile', {method: 'POST', body: formData});
 
         if(isError) {
           alert(data.message);
@@ -87,9 +119,34 @@ export default function Products() {
           setImage(filename);
         }
       }
+    }
 
-      if(filename || image) {
-        [data, isError] = await fetchData('/product', {
+    if(filename || image) {
+      if(id) {
+        const [data, isError] = await fetchData(`/product/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-type': 'application/json'
+          },
+          body: JSON.stringify({
+              'product': {
+                itemName,
+                price: price,
+                link,
+                itemImage: `https://dev.wenivops.co.kr/services/mandarin/${filename}`
+              }
+            })
+        });
+
+        if(isError) {
+          alert(data.message);
+          return;
+        } else {
+          setDisabled(true);
+        }
+      } else {
+        const [data, isError] = await fetchData('/product', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -98,13 +155,13 @@ export default function Products() {
           body: JSON.stringify({
               'product': {
                 itemName,
-                price: Number(price),
+                price: price,
                 link,
                 itemImage: `https://dev.wenivops.co.kr/services/mandarin/${filename}`
               }
             })
         });
-
+  
         if(isError) {
           alert(data.message);
           return;
@@ -136,7 +193,7 @@ export default function Products() {
         <section className={styles["image-section"]}>
           <h2 className={styles["section-title"]}>이미지 등록</h2>
           <figure className={styles["image-upload"]}>
-            <img className={`${styles.image} ${imgPreview ? '' : styles.hidden}`} src={imgPreview} alt="업로드 이미지" />
+            <img className={`${styles.image} ${imgPreview ? '' : styles.hidden}`} src={imgPreview} alt="업로드 이미지" crossOrigin='anonymous' />
             <button className={styles["camera-icon"]} aria-label="이미지 업로드" onClick={handleImgUpload} />
           </figure>
           <input type="file" className={styles.hidden} ref={fileInputRef} onChange={handleImgChange} accept="image/jpg, image/gif, image/png, image/jpeg, image/bmp, image/tif, image/heic" />

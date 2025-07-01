@@ -1,0 +1,99 @@
+.headerContainer {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.headerTitle {
+  position: absolute;
+  top: 50%;
+  left: calc(42px + 10px);
+  transform: translateY(-50%);
+  font-size: 14px;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f2f2f2;
+}
+
+.mainContent {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 60px 16px 70px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.messageRow {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  gap: 6px;
+}
+
+.otherMessageRow {
+  justify-content: flex-start;
+}
+
+.myMessageRow {
+  justify-content: flex-end;
+}
+
+.profileImage {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  align-self: flex-start;
+}
+
+.messageContent {
+  max-width: 240px;
+}
+
+.bubble {
+  margin: 0;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 18px;
+  word-break: break-all;
+}
+
+.otherMessageRow .bubble {
+  background-color: #fff;
+  border: 1px solid #c4c4c4;
+  border-top-left-radius: 0;
+}
+
+.myMessageRow .bubble {
+  background-color: #f26e22;
+  color: #fff;
+  border-top-right-radius: 0;
+}
+
+.chatImage {
+  width: 240px;
+  height: auto;
+  border-radius: 10px;
+}
+
+.time {
+  font-size: 10px;
+  color: #767676;
+  flex-shrink: 0;
+}
+
+.myMessageRow .messageContent {
+  order: 2;
+}
+
+.myMessageRow .time {
+  order: 1;
+}
