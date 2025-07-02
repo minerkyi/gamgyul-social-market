@@ -26,7 +26,7 @@ function SearchPage() {
   return (
     <div className={styles.pageContainer}>
       <Header
-        type="search"
+        type="search-input"
         value={keyword}
         onChange={(e) => setKeyword(e.target.value)}
       />

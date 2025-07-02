@@ -85,7 +85,7 @@ export default function Header(props) {
     return (
       <header className={styles.header}>
         <h1 className={styles['header-title']}>{title}</h1>
-        <button className={styles['empty-button']}>
+        <button className={styles['empty-button']} onClick={onClick}>
           <img className={styles['search-icon']} src={iconSearch} alt="검색" />
         </button>
       </header>

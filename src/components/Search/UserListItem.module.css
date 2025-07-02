@@ -1,0 +1,48 @@
+.userLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.userItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  cursor: pointer;
+}
+
+.userItem:hover {
+  background-color: #f2f2f2;
+}
+
+.profileImage {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 0.5px solid var(--border-color);
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.userName {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.accountName {
+  font-size: 12px;
+  line-height: 15px;
+  color: var(--text-color-2);
+}
+
+.highlight {
+  color: var(--main-color);
+  font-weight: 500;
+}
