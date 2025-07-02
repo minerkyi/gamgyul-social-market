@@ -3,6 +3,7 @@ import styles from './PostList.module.css';
 
 // 상단 보기버튼
 import ViewToggleHeader from './ViewToggleHeader';
+import PostItem from '../PostItem';
 
 function PostList({ posts }) {
   const [view, setView] = useState('list');
@@ -32,9 +33,7 @@ function PostList({ posts }) {
         <div className={styles.listView}>
           <p>목록형 보기 UI가 여기에 표시됩니다.</p>
           {posts.map((post) => (
-            <div key={post.id} className={styles.listItem}>
-              게시물 {post.id}
-            </div>
+            <PostItem data={post} />
           ))}
         </div>
       )}

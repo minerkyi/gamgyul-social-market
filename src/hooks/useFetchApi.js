@@ -14,11 +14,11 @@ export const useFetchApi = (path, options) => {
       setIsLoading(true);
       setIsError(false);
 
-      const response = await fetch(url + newPath, newOptions);
+      const response = await fetch(url + newPath, {...newOptions, cache: 'no-store'});
       const data = await response.json();
 
       if(!response.ok) {
-        throw new Error(`${data.message}!!! 상태코드: ${response.status}`);
+        throw new Error(`${data.message}`);
       } else {
         setResult(data);
         setIsError(false);

@@ -2,10 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import Header from '../../components/Header';
 import styles from './Products.module.css';
 import { useFetchApi } from '../../hooks/useFetchApi';
-import { useAsyncError, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useUser } from '../../contexts/userContext';
 
 export default function Products() {
   
+  const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const [seletedImg, setSeletedImg] = useState(null);
   const [imgPreview, setImgPreview] = useState(null);
@@ -22,6 +24,11 @@ export default function Products() {
   const token = localStorage.getItem('token');
   const {fetchData, result} = useFetchApi();
 
+  if(!token) {
+    navigate(-1);
+    return;
+  }
+
   useEffect(() => {
     if(id) {
       const productData = async () => {
@@ -35,7 +42,7 @@ export default function Products() {
         
         const product = data.product;
         setImgPreview(product.itemImage);
-        setImage(product.itemImage);
+        setImage(product.itemImage.split('/').pop());
         setItemName(product.itemName);
         setPrice(product.price);
         setLink(product.link);
@@ -143,7 +150,8 @@ export default function Products() {
           alert(data.message);
           return;
         } else {
-          setDisabled(true);
+          navigate(-1);
+          return;
         }
       } else {
         const [data, isError] = await fetchData('/product', {

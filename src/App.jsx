@@ -14,6 +14,7 @@ import ProfilePage from './pages/Profile/ProfilePage';
 import Footer from './components/Footer';
 import Page404 from './pages/Page404';
 import CreatePost from './pages/post/CreatePost';
+import Post from './pages/post/Post';
 
 import LoginMain from './pages/login/LoginMain';
 import EmailLoginPage from './pages/login/EmailLoginPage'; 
@@ -29,7 +30,9 @@ function App() {
           <Route path="/" element={<Index />} />
           <Route path="/product/create" element={<Products />} />
           <Route path="/product/update/:id" element={<Products />} />
+          <Route path="/post/comments/:id" element={<Post />} />
           <Route path="/post/create" element={<CreatePost />} />
+          <Route path="/post/update/:id" element={<CreatePost />} />
           <Route path="/sample" element={<Sample />} />
 
           <Route path="/profile" element={<ProfilePage />} />
@@ -45,6 +48,7 @@ function App() {
           />
           <Route path="/chat" element={<ChatListPage />} />
           <Route path="/chat/:chatId" element={<MessageRoom />} />
+          
           <Route path="*" element={<Page404 />} />
 
           <Route path='/login/signup' element={<SignupPage />} />
