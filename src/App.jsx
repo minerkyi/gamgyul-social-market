@@ -21,13 +21,14 @@ import EmailLoginPage from './pages/login/EmailLoginPage';
 import SignupPage from './pages/login/SignupPage';
 import SignupProfilePage from './pages/login/SignupProfilePage';
 import { UserProvider } from './contexts/userContext';
+import HomeFeed from './pages/home/HomeFeed';
 
 function App() {
   return (
     <UserProvider>
       <BrowserRouter basename="/gamgyul-social-market">
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<HomeFeed />} />
           <Route path="/product/create" element={<Products />} />
           <Route path="/product/update/:id" element={<Products />} />
           <Route path="/post/comments/:id" element={<Post />} />

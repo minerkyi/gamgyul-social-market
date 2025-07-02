@@ -13,7 +13,6 @@ import ConfirmModal from './common/ConfirmModal';
 
 export default function PostItem({data, isComments = false, commentsCount = 0}) {
 
-  console.log(data);
   const navigate = useNavigate();
   const {fetchData} = useFetchApi();
   const [postData, setPostData] = useState(data);
@@ -72,7 +71,6 @@ export default function PostItem({data, isComments = false, commentsCount = 0}) 
       alert(data.message);
       return;
     } else {
-      console.log(data);
       if(data.post.hearted) {
         setHeart(iconHeartActive);
       } else {
@@ -142,10 +140,10 @@ export default function PostItem({data, isComments = false, commentsCount = 0}) 
         
         <section className={styles["post-content"]}>
           {contents.map((content, idx) => (
-            <>
+            <React.StrictMode key={idx}>
               {content}
               {idx < contents.length - 1 && <br />}
-            </>
+            </React.StrictMode>
           ))}
         </section>
 
