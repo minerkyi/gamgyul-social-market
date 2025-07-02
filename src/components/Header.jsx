@@ -18,10 +18,11 @@ export default function Header(props) {
   } = props;
   const navigate = useNavigate();
 
+  // 카멜케이스-> 코드 컨벤션스타일로 수정
   if (type === 'search-input') {
     return (
       <header className={styles.searchHeader}>
-        <button className={styles.backButton} onClick={() => navigate(-1)}>
+        <button className={styles['back-button']} onClick={() => navigate(-1)}>
           <img src={iconArrow} alt="뒤로가기" />
         </button>
         <input

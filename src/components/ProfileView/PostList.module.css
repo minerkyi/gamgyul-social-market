@@ -6,13 +6,11 @@
 
 .listItem {
   padding-top: 0;
-  padding-bottom: 30px;
-  border-bottom: 1px solid #dbdbdb;
+  padding-bottom: 20px;
 }
 
 .listItem:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
+  padding-bottom: 30px;
 }
 
 /* 앨범형 보기 */
