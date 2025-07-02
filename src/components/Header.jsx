@@ -53,6 +53,15 @@ export default function Header(props) {
         </button>
       </header>
     );
+  } else if(type === 'home') {
+    return (
+      <header className={styles.header}>
+        <h1 className={`${styles['header-title']} ${styles.home}`}>{title}</h1>
+        <button className={styles['empty-button']} onClick={() => navigate('/profile/test1')}>
+          <img className={styles['search-icon']} src={iconSearch} alt="검색" />
+        </button>
+      </header>
+    );
   } else {
     return (
       <header className={styles.header}>

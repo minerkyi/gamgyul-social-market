@@ -33,7 +33,7 @@ function PostList({ posts }) {
         <div className={styles.listView}>
           <p>목록형 보기 UI가 여기에 표시됩니다.</p>
           {posts.map((post) => (
-            <PostItem data={post} />
+            <PostItem key={post.id} data={post} />
           ))}
         </div>
       )}
