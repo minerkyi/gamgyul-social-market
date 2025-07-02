@@ -1,4 +1,4 @@
-.inputArea {
+.input-area {
   display: flex;
   flex: 1;
   overflow: auto;
@@ -6,7 +6,7 @@
   padding: 16px;
 }
 
-.profileIcon {
+.profile-icon {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -18,32 +18,31 @@
 
   border-radius: 50%;
 }
-.profileInner img {
+.profile-inner img {
   width: 100%;
   height: 100%;
 
   border-radius: 50%;
 }
 
-.postInput {
+.post-input {
   flex: 1;
 
   margin-top: 10px;
-  font-size: 16px;
-  border: none;
   outline: none;
   resize: none;
-
+  
+  border: none;
   background-color: transparent;
 
   color: var(--text-color);
   font-size: 14px;
 }
-.postInput::placeholder {
+.post-input::placeholder {
   color: #c4c4c4;
 }
 
-.previewContainer {
+.preview-container {
   display: flex;
   align-items: center;
 
@@ -58,7 +57,7 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
-.previewImg {
+.preview-img {
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -66,10 +65,10 @@
 
   box-sizing: border-box;
 }
-.single .previewImg {
+.single .preview-img {
   padding-right: 21px;
 }
-.single .previewImg > img {
+.single .preview-img > img {
   object-fit: cover;
 
   width: 304px;
@@ -77,11 +76,11 @@
 
   border-radius: 10px;
 }
-.multi .previewImg {
+.multi .preview-img {
   height: 126px;
   padding-right: 8px;
 }
-.multi .previewImg > img {
+.multi .preview-img > img {
   object-fit: cover;
 
   width: 168px;
@@ -89,7 +88,7 @@
 
   border-radius: 10px;
 }
-.removeBtn {
+.remove-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -105,12 +104,12 @@
 
   cursor: pointer;
 }
-.multi .removeBtn {
+.multi .remove-btn {
   right: 8px;
 }
 
 /* 플로팅 이미지 버튼 */
-.fabButton {
+.fab-button {
   display: flex;
   align-items: center;
   justify-content: center;

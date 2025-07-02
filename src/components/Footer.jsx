@@ -29,7 +29,7 @@ export default function Footer() {
             <span className={styles['nav-label']}>채팅</span>
           </div>
         </Link>
-        <Link to="/post" className={styles.link}>
+        <Link to="/post/create" className={styles.link}>
           <div className={styles['nav-item']}>
             <div className={`${styles['nav-icon']} ${styles.edit}`} />
             <span className={styles['nav-label']}>게시물 작성</span>

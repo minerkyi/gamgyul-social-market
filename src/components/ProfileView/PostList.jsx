@@ -2,6 +2,7 @@ import { useState } from 'react';
 import styles from './PostList.module.css';
 
 // 상단 보기버튼
+import PostItem from '../PostItem';
 import ViewToggleHeader from './ViewToggleHeader';
 
 function PostList({ posts }) {
@@ -30,11 +31,10 @@ function PostList({ posts }) {
         </div>
       ) : (
         <div className={styles.listView}>
-          <p>목록형 보기 UI가 여기에 표시됩니다.</p>
           {posts.map((post) => (
-            <div key={post.id} className={styles.listItem}>
-              게시물 {post.id}
-            </div>
+            <article key={post.id} className={styles.listItem}>
+              <PostItem data={post} />
+            </article>
           ))}
         </div>
       )}
