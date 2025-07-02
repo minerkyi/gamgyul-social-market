@@ -4,6 +4,7 @@ import styles from './ChatListPage.module.css';
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { dummyUsers } from '../../data/dummyUsers';
 
 import ChatListItem from '../../components/Chat/ChatListItem';
 import ConfirmModal from '../../components/common/ConfirmModal';
@@ -11,32 +12,27 @@ import Modal from '../../components/common/Modal';
 import Footer from '../../components/Footer';
 import Header from '../../components/Header';
 
-const dummyChatList = [
-  {
-    id: 'chat1',
-    userName: '애월읍 위니브 감귤농장',
-    lastMessage: '이번에 정정 언제하맨마씸?',
-    timestamp: '2020.10.25',
-    profileImage: '',
-    unreadCount: 1,
-  },
-  {
-    id: 'chat2',
-    userName: '제주감귤마을',
-    lastMessage: '깊은 어둠의 존재감, 롤스로이스 뉴 블랙 배지...',
-    timestamp: '2020.10.25',
-    profileImage: '',
-    unreadCount: 1,
-  },
-  {
-    id: 'chat3',
-    userName: '누구네 농장 친환경 한라봉',
-    lastMessage: '내 차는 내가 평가한다. 오픈 이벤트에 참여 하...',
-    timestamp: '2020.10.25',
-    profileImage: '',
-    unreadCount: 0,
-  },
+const dummyLastMessages = [
+  '이번에 주문 가능한가요?',
+  '좋은 하루 보내세요. 콜스프레소 뉴 블랙 해...',
+  '내 차는 내가 평가한다. 오픈 이벤트에 참여 하...',
+  '저도 같이 참여하고 싶어요!',
 ];
+const dummyTimestamps = [
+  '2025.07.02',
+  '2025.07.02',
+  '2025.07.02',
+  '2020.07.02',
+];
+
+const dummyChatList = dummyUsers.map((user, index) => ({
+  id: `chat${index + 1}`,
+  userName: user.username,
+  profileImage: user.image,
+  lastMessage: dummyLastMessages[index],
+  timestamp: dummyTimestamps[index],
+  unreadCount: index < 2 ? 2 - index : 0,
+}));
 
 function ChatListPage() {
   const navigate = useNavigate();

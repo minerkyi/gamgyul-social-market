@@ -62,3 +62,37 @@
   background-color: #ffffff;
   border: none;
 }
+
+.searchHeader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background-color: #fff;
+  border-bottom: 0.5px solid var(--border-color);
+  z-index: 100;
+  box-sizing: border-box;
+}
+
+.searchInput {
+  flex-grow: 1;
+  height: 32px;
+  padding: 7px 16px;
+  border-radius: 32px;
+  background-color: #f2f2f2;
+  border: none;
+  font-size: 14px;
+}
+
+.searchInput::placeholder {
+  color: #c4c4c4;
+}
+
+.searchInput:focus {
+  outline: none;
+}
