@@ -7,32 +7,49 @@ import iconHeart from '../assets/icon/icon-heart.png';
 import iconHeartActive from '../assets/icon/icon-heart-active.png';
 import iconMessageCircle from '../assets/icon/icon-message-circle.svg';
 import { useFetchApi } from '../hooks/useFetchApi';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import BottomModal from './BottomModal';
+import ConfirmModal from './common/ConfirmModal';
 
 export default function PostItem({data, isComments = false, commentsCount = 0}) {
 
+  console.log(data);
   const navigate = useNavigate();
   const {fetchData} = useFetchApi();
-  const [postData, setPostData] = useState(data.post);
+  const [postData, setPostData] = useState(data);
   const authorData = postData.author;
   const [image, setImage] = useState(profileImg);
   const [heart, setHeart] = useState(iconHeart);
   const [current, setCurrent] = useState(0);
 
   const [isOpenPostModal, setIsOpenPostModal] = useState(false);
+  const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
   
+  const accountname = localStorage.getItem('accountname');
   const token = localStorage.getItem('token');
   
-  const handleDelete = () => {
-    console.log('delete', postData.id)
+  const handleDelete = async () => {
+    const [data, isErr] = await fetchData(`/post/${postData.id}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization" : `Bearer ${token}`,
+        "Content-type" : "application/json"
+      }
+    });
+
+    if(isErr) {
+      alert(data.message);
+      return;
+    } else {
+      navigate(-1);
+    }
   };
   const handleUpdate = () => {
-    console.log('Update', postData.id)
+    navigate(`/post/update/${postData.id}`);
   };
   const children = [
-    {title:'삭제', event:{handleDelete}},
-    {title:'수정', event:{handleUpdate}}
+    {title:'삭제', event:() => setIsOpenConfirmModal(true)},
+    {title:'수정', event:handleUpdate}
   ];
 
   const handleHearted = async () => {
@@ -65,7 +82,12 @@ export default function PostItem({data, isComments = false, commentsCount = 0}) 
     }
   };
 
-  const handlePostMorBtn = () => {};
+  const handlePostMore = (account) => {
+    if(accountname === account) {
+      setIsOpenPostModal(true);
+    }
+  };
+
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
     const year = date.getFullYear();
@@ -89,14 +111,22 @@ export default function PostItem({data, isComments = false, commentsCount = 0}) 
   }, []);
 
   const handleComments = (id) => {
-    navigate(`/post/${id}`);
+    navigate(`/post/comments/${id}`);
   }
 
-  const images = postData.image.split(',');
+  let images = [];
+  if(postData.image) {
+    images = postData.image.split(',');
+  }
+
+  let contents = [];
+  if(postData.content) {
+    contents = postData.content.split('\n');
+  }
 
   return (
     <>
-      <article className={`${styles.post} ${commentsCount > 0 || postData.commentCount > 0 ? '' : styles["no-comments"]}`}>
+      <article className={`${styles.post} ${commentsCount > 0 || !isComments ? '' : styles["no-comments"]}`}>
         <header className={styles["post-header"]}>
           <div className={styles["user-info"]}>
             <img className={styles["profile-img"]} src={image} alt="이미지 첨부" crossOrigin='anonymous' />
@@ -106,12 +136,17 @@ export default function PostItem({data, isComments = false, commentsCount = 0}) 
             </div>
           </div>
           <button className={styles["empty-button"]}>
-            <img className={styles["icon-small"]} src={iconMoreButtonS} alt="게시글 더 보기 버튼" onClick={() => setIsOpenPostModal(true)} />
+            <img className={styles["icon-small"]} src={iconMoreButtonS} alt="게시글 더 보기 버튼" onClick={() => handlePostMore(authorData.accountname)} />
           </button>
         </header>
         
         <section className={styles["post-content"]}>
-          {postData.content}
+          {contents.map((content, idx) => (
+            <>
+              {content}
+              {idx < contents.length - 1 && <br />}
+            </>
+          ))}
         </section>
 
       {images.length > 0 && (
@@ -123,7 +158,7 @@ export default function PostItem({data, isComments = false, commentsCount = 0}) 
           </div>
           <figcaption className={styles.dots}>
           {images.map((_, idx) => (
-            <span key={idx} className={`${styles.dot} ${current === idx ? styles.activeDot : ''}`} onClick={() => setCurrent(idx)} />
+            <span key={idx} className={`${styles.dot} ${current === idx ? styles["active-dot"] : ''}`} onClick={() => setCurrent(idx)} />
           ))}
           </figcaption>
         </figure>
@@ -145,6 +180,7 @@ export default function PostItem({data, isComments = false, commentsCount = 0}) 
         </footer>
       </article>
       <BottomModal isOpen={isOpenPostModal} setIsOpen={setIsOpenPostModal} children={children} />
+      <ConfirmModal isOpen={isOpenConfirmModal} onClose={() => setIsOpenConfirmModal(false)} message="게시글을 삭제할까요?" confirmText="삭제" onConfirm={handleDelete} />
     </>
   );
 }

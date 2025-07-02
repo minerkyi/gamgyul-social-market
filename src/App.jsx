@@ -30,8 +30,9 @@ function App() {
           <Route path="/" element={<Index />} />
           <Route path="/product/create" element={<Products />} />
           <Route path="/product/update/:id" element={<Products />} />
-          <Route path="/post/:id" element={<Post />} />
+          <Route path="/post/comments/:id" element={<Post />} />
           <Route path="/post/create" element={<CreatePost />} />
+          <Route path="/post/update/:id" element={<CreatePost />} />
           <Route path="/sample" element={<Sample />} />
 
           <Route path="/profile" element={<ProfilePage />} />

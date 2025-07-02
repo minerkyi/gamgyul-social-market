@@ -18,7 +18,7 @@ export const useFetchApi = (path, options) => {
       const data = await response.json();
 
       if(!response.ok) {
-        throw new Error(`${data.message}!!! 상태코드: ${response.status}`);
+        throw new Error(`${data.message}`);
       } else {
         setResult(data);
         setIsError(false);

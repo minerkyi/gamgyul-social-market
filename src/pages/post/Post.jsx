@@ -6,17 +6,20 @@ import profileImg from '../../assets/Ellipse-1.png';
 import iconMoreButton from '../../assets/icon/icon-more-vertical.png';
 import BottomModal from '../../components/BottomModal';
 import PostItem from '../../components/PostItem';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useFetchApi } from '../../hooks/useFetchApi';
+import ConfirmModal from '../../components/common/ConfirmModal';
 
 export default function Post() {
 
+  const navigate = useNavigate();
   const [inputComment, setInputComment] = useState('');
   const [commentsCount, setCommentsCount] = useState();
   const [image, setImage] = useState(profileImg);
-  const [modalTitle, setModalTitle] = useState('신고하기');
-  const [modalEvnet, setModalEvent] = useState(null);
+  const [commentId, setCommentId] = useState(null);
+  const [modalInfo, setModalInfo] = useState(null);
   const [isOpenCommentModal, setIsOpenCommentModal] = useState(false);
+  const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
 
   const [postData, setPostData] = useState(null);
   const [commentsData, setCommentsData] = useState([]);
@@ -65,7 +68,7 @@ export default function Post() {
     return rtf.format(-days, 'day');
   };
 
-  const handleReport = async ({commentId}) => {
+  const handleReport = async (commentId) => {
     const [data, isErr] = await fetchData(`/post/${id}/comments/${commentId}/report`, {
       method: "POST",
       headers: {
@@ -82,7 +85,7 @@ export default function Post() {
     }
   };
 
-  const handleDelete = async ({commentId}) => {
+  const handleDelete = async () => {
     const [data, isErr] = await fetchData(`/post/${id}/comments/${commentId}`, {
       method: "DELETE",
       headers: {
@@ -96,20 +99,21 @@ export default function Post() {
       return;
     } else {
       getComments();
+      setIsOpenConfirmModal(false);
       setIsOpenCommentModal(false);
     }
   };
   
-  const children = [{title:modalTitle, event:modalEvnet}];
+  const children = [modalInfo];
   const hadleCommentMore = (account, commentId) => {
+    console.log('more', commentId);
     if(account === accountname) {
-      setModalEvent({func:handleDelete, param:{commentId}});
-      setModalTitle('삭제');
+      setModalInfo({title:'삭제', event:() => setIsOpenConfirmModal(true)});
     } else {
-      setModalEvent({handleReport, commentId});
-      setModalTitle('신고하기');
+      setModalInfo({title:'신고하기', event:() => handleReport(commentId)});
     }
     setIsOpenCommentModal(true);
+    setCommentId(commentId);
   };
 
   const handleSubmit = async (e) => {
@@ -152,13 +156,14 @@ export default function Post() {
       console.log(data);
       if(isErr) {
         alert(data.message);
+        navigate(-1);
         return;
       } else {
-        setPostData(data);
+        setPostData(data.post);
+        getComments();
       }
     };
     postData();
-    getComments();
 
     const profileImage = localStorage.getItem('profileimage');
     if(profileImage) {
@@ -203,6 +208,8 @@ export default function Post() {
         </form>
       </main>
       <BottomModal isOpen={isOpenCommentModal} setIsOpen={setIsOpenCommentModal} children={children} />
+      <ConfirmModal isOpen={isOpenConfirmModal} onClose={() => setIsOpenConfirmModal(false)} message="댓글을 삭제할까요?" confirmText="삭제" onConfirm={(handleDelete)}
+      />
     </>
   );
 }

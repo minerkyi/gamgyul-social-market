@@ -4,11 +4,12 @@ import styles from './CreatePost.module.css';
 import uploadImg from '../../assets/upload-file.png';
 import profileImg from '../../assets/Ellipse-1.png';
 import deleteImg from '../../assets/icon/icon-delete.svg';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useFetchApi } from '../../hooks/useFetchApi';
 
 export default function CreatePost() {
 
+  const navigate = useNavigate();
   const [disabled, setDisabeld] = useState(true);
   const [post, setPost] = useState('');
   const fileInputRef = useRef(null);
@@ -18,8 +19,13 @@ export default function CreatePost() {
 
   const [image, setImage] = useState(profileImg);
   const {fetchData} = useFetchApi();
+
+  const {id} = useParams();
   
   const token = localStorage.getItem('token');
+  if(!token) {
+    navigate('/login');
+  }
 
   const handleUpload = async () => {
     let [data, isErr] = [];
@@ -28,7 +34,11 @@ export default function CreatePost() {
     if(seletedImgs.length > 0 && imageNames.length === 0) {
       const formData = new FormData();
       seletedImgs.forEach((file) => {
-        formData.append('image', file);
+        if(typeof file === 'string') {
+          names.push(file);
+        } else {
+          formData.append('image', file);
+        }
       });
 
       [data, isErr] = await fetchData('/image/uploadfiles', {method: 'POST', body: formData});
@@ -44,8 +54,14 @@ export default function CreatePost() {
       });
     }
 
-    [data, isErr] = await fetchData('/post', {
-      method: 'POST',
+    let path = '/post';
+    let method = 'POST';
+    if(id) {
+      path = `/post/${id}`;
+      method = 'PUT';
+    }
+    [data, isErr] = await fetchData(path, {
+      method: method,
       headers: {
         "Authorization" : `Bearer ${token}`,
         "Content-type" : "application/json"
@@ -64,6 +80,11 @@ export default function CreatePost() {
       return;
     }
 
+    if(id) {
+      navigate(-1);
+      return;
+    }
+
     setPost('');
     setSeletedImgs([]);
     setPreviewImgs([]);
@@ -77,13 +98,6 @@ export default function CreatePost() {
   };
 
   const handlePost = (e) => {
-    const value = e.target.value;
-
-    if(value !== '') {
-      setDisabeld(false);
-    } else if(seletedImgs.length === 0) {
-      setDisabeld(true);
-    }
     setPost(e.target.value);
   }
 
@@ -104,12 +118,6 @@ export default function CreatePost() {
     
     if(files.length > 0) {
       handleImageSelect(files);
-    }
-
-    if(!post && totalLength === 0) {
-      setDisabeld(true);
-    } else {
-      setDisabeld(false);
     }
   };
 
@@ -142,47 +150,76 @@ export default function CreatePost() {
   useEffect(() => {
     if(!post && seletedImgs.length === 0) {
       setDisabeld(true);
+    } else {
+      setDisabeld(false);
     }
-  }, [seletedImgs]);
+  }, [seletedImgs, post]);
 
   useEffect(() => {
-    setImage(localStorage.getItem('profileimg'));
+    const profileImg = localStorage.getItem('profileimage');
+    if(profileImg) {
+      setImage(localStorage.getItem('profileimage'));
+    }
+
+    if(id) {
+      console.log('update');
+      const postData = async () => {
+        const [data, isErr] = await fetchData(`/post/${id}`, {
+          method: "GET",
+          headers: {
+            "Authorization" : `Bearer ${token}`,
+            "Content-type" : "application/json"
+          }
+        });
+
+        if(isErr) {
+          alert(data.message);
+          navigate(-1);
+          return;
+        } else {
+          const updateData = data.post;
+          setPost(updateData.content);
+          if(updateData.image) {
+            setPreviewImgs(updateData.image.split(','));
+            setSeletedImgs(updateData.image.split(','));
+          }
+        }
+      };
+      postData();
+    }
   }, []);
 
   return (
     <>
-      <Header title={'게시글 작성'} type={'products'} onClick={handleUpload} disabled={disabled} />
-      <div className={styles.inputArea}>
-        <div className={styles.profileIcon}>
-          <div className={styles.profileInner}>
+      <Header title={id ? '게시글 수정' : '게시글 작성'} type={'products'} onClick={handleUpload} disabled={disabled} />
+      <h2 className="sr-only">{id ? '게시글 수정' : '게시글 작성'}</h2>
+      <section className={styles["input-area"]}>
+        <aside className={styles["profile-icon"]}>
+          <div className={styles["profile-inner"]}>
             <img src={image} alt="이미지 첨부" crossOrigin='anonymous' />
           </div>
-        </div>
-        <textarea        
-          className={styles.postInput}
-          name="post-text"
-          value={post}
-          onChange={handlePost}
-          placeholder="게시글 입력하기..."
-          rows={8}
-        />
-      </div>
-      <div
-      className={`${styles.previewContainer} ${previewImgs.length > 1 ? styles.multi : styles.single}`}>
+        </aside>
+        <label className="sr-only" htmlFor="postText">게시글 입력하기</label>
+        <textarea className={styles["post-input"]} id="postText" name="postText" value={post} onChange={handlePost} placeholder="게시글 입력하기..." rows={8} />
+      </section>
+
+      <section className={`${styles["preview-container"]} ${previewImgs.length > 1 ? styles.multi : styles.single}`}>
       {previewImgs.map((url, idx) => (
-        <div key={idx} className={styles.previewImg}>
-          <button type="button" className={styles.removeBtn} onClick={() => handleDeleteImg(idx)}>
+        <div key={idx} className={styles["preview-img"]}>
+          <button type="button" className={styles["remove-btn"]} onClick={() => handleDeleteImg(idx)}>
             <img src={deleteImg} alt="이미지 삭제" />
           </button>
-          <img src={url} alt="이미지 첨부" />
+          <img src={url} alt="이미지 첨부" crossOrigin="anonymous" />
         </div>
       ))}
-      </div>
+      </section>
 
-      <button className={styles.fabButton} onClick={handleUploadImg}>
-        <img src={uploadImg} alt="이미지 첨부" />
-      </button>
-      <input type="file" className={styles.hidden} ref={fileInputRef} onChange={handleImgChange} accept="image/jpg, image/gif, image/png, image/jpeg, image/bmp, image/tif, image/heic" multiple />
+      <footer>
+        <button className={styles["fab-button"]} onClick={handleUploadImg}>
+          <img src={uploadImg} alt="이미지 선택 버튼" />
+        </button>
+        <input type="file" className={styles.hidden} ref={fileInputRef} onChange={handleImgChange} accept="image/jpg, image/gif, image/png, image/jpeg, image/bmp, image/tif, image/heic" multiple />
+      </footer>
     </>
   )
 }

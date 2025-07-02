@@ -16,7 +16,7 @@ function BottomModal({ isOpen, setIsOpen, children }) {
           <ul className={styles["menu-list"]}>
           {children.map((item, idx) => (
             <li key={idx}>
-              <button type="button" className={styles["menu-button"]} onClick={() => item.event.func(item.event.param)}>
+              <button type="button" className={styles["menu-button"]} onClick={item.event}>
                 {item.title}
               </button>
             </li>
