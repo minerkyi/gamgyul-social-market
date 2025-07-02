@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "./SignupProfilePage.module.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useFetchApi } from "../../hooks/useFetchApi";
+import { useUser } from "../../contexts/userContext";
 
 import basicProfileImage from "../../assets/basic-profile-img.png";
 import Header from "../../components/Header";
@@ -21,6 +22,8 @@ function SignupProfilePage() {
   const [isAccountIdValid, setIsAccountIdValid] = useState("");
 
   const { fetchData } = useFetchApi();
+
+  const { saveUser } = useUser();
 
   const isFormValid =
     isUsernameValid === "" &&
@@ -75,7 +78,6 @@ function SignupProfilePage() {
     }
   };
 
-  // 저장
   const handleSave = async (e) => {
     e.preventDefault();
     console.log(username, accountname, email, password, intro);
@@ -83,6 +85,7 @@ function SignupProfilePage() {
       return;
     }
 
+    // 회원가입
     const path = "/user";
     const options = {
       method: "POST",
@@ -106,8 +109,23 @@ function SignupProfilePage() {
     const [data, isErr] = await fetchData(path, options);
     console.log("데이터 :", data);
     console.log("에러 : ", isErr);
+    
+    // 자동 로그인
+    const loginPath = "/user/login";
+    const loginOptions = {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        user: { email, password },
+      }),
+    };
 
-    navigate("/login/email");
+    const [loginData] = await fetchData(loginPath, loginOptions);
+
+    saveUser(loginData);
+    navigate("/");
   };
 
   return (
