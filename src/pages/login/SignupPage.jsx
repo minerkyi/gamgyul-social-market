@@ -70,7 +70,7 @@ function SignupPage() {
     <div className={styles.background}>
       <div className={styles.container}>
         {/* <div> */}
-        <h2 className={styles.title}>회원가입</h2>
+        <h2 className={styles.title}>이메일로 회원가입</h2>
         <form className={styles.form} onSubmit={handleNext}>
           <InputField
             type="email"
