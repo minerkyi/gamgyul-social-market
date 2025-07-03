@@ -150,11 +150,9 @@ function ProfilePage() {
 
   const handleConfirmDeletePost = async () => {
     if (!selectedPost) return;
-
     const API_URL = 'https://dev.wenivops.co.kr/services/mandarin';
     const token = localStorage.getItem('token');
     const requestUrl = `${API_URL}/post/${selectedPost.id}`;
-
     try {
       const response = await fetch(requestUrl, {
         method: 'DELETE',

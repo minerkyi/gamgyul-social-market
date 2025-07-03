@@ -3,13 +3,14 @@
 }
 
 /* 리스트형 보기 */
-.listView {
-  padding: 16px;
-}
 
 .listItem {
-  padding: 9px 0;
-  border-bottom: 1px solid #dbdbdb;
+  padding-top: 0;
+  padding-bottom: 20px;
+}
+
+.listItem:last-child {
+  padding-bottom: 30px;
 }
 
 /* 앨범형 보기 */

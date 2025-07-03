@@ -7,14 +7,16 @@ export const FooterProvider = ({ children }) => {
   const location = useLocation();
   const path = location.pathname;
 
-  const visiblePathPatterns = ['/', '/products', '/profile', '/chat'];
+  const visiblePathPatterns = [
+    '/profile',
+    '/chat',
+    '/home',
+    '/search',
+  ];
 
   const isVisibled = visiblePathPatterns.some((pattern) => {
-    if (pattern === '/chat') {
-      return path === '/chat';
-    }
-    if (pattern === '/') {
-      return path === '/';
+    if (pattern === '/chat' || pattern === '/home' || pattern === '/search') {
+      return path === pattern;
     }
     return path.startsWith(pattern);
   });
