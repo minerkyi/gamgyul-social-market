@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/common/Button/Button";
 import InputField from "../../components/common/Input/InputField";
@@ -14,6 +14,10 @@ function EmailLoginPage() {
   const [loginError, setLoginError] = useState("");
 
   const { fetchData } = useFetchApi();
+
+  useEffect(() => {
+    window.history.forward();
+  }, []);
 
   const goToSignupPage = () => {
     navigate("/login/signup");
