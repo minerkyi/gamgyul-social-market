@@ -1,12 +1,40 @@
 import { useNavigate } from 'react-router-dom';
+
+import styles from './Header.module.css';
+
 import iconArrow from '../assets/icon/icon-arrow-left.png';
 import iconMore from '../assets/icon/icon-more-vertical.png';
 import iconSearch from '../assets/icon/icon-search.png';
-import styles from './Header.module.css';
 
 export default function Header(props) {
-  const { title, type, onClick, disabled = false } = props;
+  const {
+    title,
+    type,
+    onClick,
+    disabled = false,
+    isTitleVisible = false,
+    value,
+    onChange,
+  } = props;
   const navigate = useNavigate();
+
+  // 카멜케이스-> 코드 컨벤션스타일로 수정
+  if (type === 'search-input') {
+    return (
+      <header className={styles.searchHeader}>
+        <button className={styles['back-button']} onClick={() => navigate(-1)}>
+          <img src={iconArrow} alt="뒤로가기" />
+        </button>
+        <input
+          type="text"
+          className={styles.searchInput}
+          placeholder="계정 검색"
+          value={value}
+          onChange={onChange}
+        />
+      </header>
+    );
+  }
 
   if (type === 'products') {
     return (
@@ -57,7 +85,7 @@ export default function Header(props) {
     return (
       <header className={styles.header}>
         <h1 className={`${styles['header-title']} ${styles.home}`}>{title}</h1>
-        <button className={styles['empty-button']} onClick={() => navigate('/profile/test1')}>
+        <button className={styles['empty-button']} onClick={() => navigate('/search')}>
           <img className={styles['search-icon']} src={iconSearch} alt="검색" />
         </button>
       </header>
@@ -66,7 +94,7 @@ export default function Header(props) {
     return (
       <header className={styles.header}>
         <h1 className={styles['header-title']}>{title}</h1>
-        <button className={styles['empty-button']}>
+        <button className={styles['empty-button']} onClick={onClick}>
           <img className={styles['search-icon']} src={iconSearch} alt="검색" />
         </button>
       </header>
