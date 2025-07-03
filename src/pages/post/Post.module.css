@@ -1,5 +1,6 @@
 .container {
   margin: 0 auto 60px;
+  padding-top: 48px;
   background-color: #ffffff;
   font-size: 14px;
   color: var(--text-color);
@@ -42,14 +43,14 @@
 .comment-username {
   font-weight: 600;
   font-size: 13px;
-  color: #333;
+  color: var(--text-color);
 }
 
 .comment-time {
   margin-left: 6px;
 
   font-size: 11px;
-  color: #999;
+  color: var(--text-sub-color);
 }
 
 .comment-text {

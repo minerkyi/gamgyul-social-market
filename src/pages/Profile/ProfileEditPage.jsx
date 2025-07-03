@@ -173,7 +173,7 @@ function ProfileEditPage() {
   return (
     <div className={styles.pageContainer}>
       <Header
-        type="products"
+        type="product"
         title="프로필 수정"
         disabled={!isFormValid}
         onClick={handleSave}

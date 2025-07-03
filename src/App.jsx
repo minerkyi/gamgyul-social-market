@@ -1,13 +1,11 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { FooterProvider } from './contexts/FooterContext';
 
-import Index from './pages/Index';
 import Products from './pages/products/Products';
 import Sample from './pages/Sample';
 
 import ChatListPage from './pages/Chat/ChatListPage';
 import MessageRoom from './pages/Chat/MessageRoom';
-import HomePage from './pages/Home/HomePage';
 import FollowListPage from './pages/Profile/FollowListPage';
 import ProfileEditPage from './pages/Profile/ProfileEditPage';
 import ProfilePage from './pages/Profile/ProfilePage';
@@ -25,13 +23,14 @@ import SignupPage from './pages/login/SignupPage';
 import SignupProfilePage from './pages/login/SignupProfilePage';
 import HomeFeed from './pages/home/HomeFeed';
 import RequireLogin from './components/RequireLogin';
+import Splash from './pages/Splash';
 
 function App() {
   return (
     <UserProvider>
       <BrowserRouter basename="/gamgyul-social-market">
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<Splash />} />
           <Route path="/home" element={<RequireLogin><HomeFeed /></RequireLogin>} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/product/create" element={<RequireLogin><Products /></RequireLogin>} />

@@ -8,8 +8,6 @@ export const FooterProvider = ({ children }) => {
   const path = location.pathname;
 
   const visiblePathPatterns = [
-    '/',
-    '/products',
     '/profile',
     '/chat',
     '/home',
@@ -17,7 +15,7 @@ export const FooterProvider = ({ children }) => {
   ];
 
   const isVisibled = visiblePathPatterns.some((pattern) => {
-    if (pattern === '/chat' || pattern === '/' || pattern === '/profile') {
+    if (pattern === '/chat' || pattern === '/home' || pattern === '/search') {
       return path === pattern;
     }
     return path.startsWith(pattern);

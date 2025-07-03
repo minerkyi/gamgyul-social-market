@@ -36,7 +36,7 @@ export default function HomeFeed() {
 
   return (
     <>
-      <Header title="감귤마켓 피드" type="home" />
+      <Header title="감귤마켓 피드" type="home" isTitleVisible={true} />
       <main className={styles.main}>
         <h2 className="sr-only">홈 피드</h2>
         {posts.length > 0 ? posts.map((post) => (

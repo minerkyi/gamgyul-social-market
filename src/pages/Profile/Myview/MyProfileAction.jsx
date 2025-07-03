@@ -8,7 +8,7 @@ function MyProfileAction() {
       <Link to="/profile/edit" className={styles.profileButton}>
         프로필 수정
       </Link>
-      <Link to="/product/upload" className={styles.profileButton}>
+      <Link to="/product/create" className={styles.profileButton}>
         상품 등록
       </Link>
     </div>
