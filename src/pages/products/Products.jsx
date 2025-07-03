@@ -24,11 +24,6 @@ export default function Products() {
   const token = localStorage.getItem('token');
   const {fetchData, result} = useFetchApi();
 
-  if(!token) {
-    navigate(-1);
-    return;
-  }
-
   useEffect(() => {
     if(id) {
       const productData = async () => {
