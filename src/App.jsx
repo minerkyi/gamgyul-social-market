@@ -24,30 +24,32 @@ import LoginMain from './pages/login/LoginMain';
 import SignupPage from './pages/login/SignupPage';
 import SignupProfilePage from './pages/login/SignupProfilePage';
 import HomeFeed from './pages/home/HomeFeed';
+import RequireLogin from './components/RequireLogin';
 
 function App() {
   return (
     <UserProvider>
       <BrowserRouter basename="/gamgyul-social-market">
         <Routes>
-          <Route path="/" element={<HomeFeed />} />
+          <Route path="/" element={<Index />} />
+          <Route path="/home" element={<RequireLogin><HomeFeed /></RequireLogin>} />
           <Route path="/search" element={<SearchPage />} />
-          <Route path="/product/create" element={<Products />} />
-          <Route path="/product/update/:id" element={<Products />} />
-          <Route path="/post/comments/:id" element={<Post />} />
-          <Route path="/post/create" element={<CreatePost />} />
-          <Route path="/post/update/:id" element={<CreatePost />} />
+          <Route path="/product/create" element={<RequireLogin><Products /></RequireLogin>} />
+          <Route path="/product/update/:id" element={<RequireLogin><Products /></RequireLogin>} />
+          <Route path="/post/comments/:id" element={<RequireLogin><Post /></RequireLogin>} />
+          <Route path="/post/create" element={<RequireLogin><CreatePost /></RequireLogin>} />
+          <Route path="/post/update/:id" element={<RequireLogin><CreatePost /></RequireLogin>} />
           <Route path="/sample" element={<Sample />} />
 
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/profile/edit" element={<ProfileEditPage />} />
-          <Route path="/profile/:accountname" element={<ProfilePage />} />
-          <Route path="/profile/:accountname/followers" element={<FollowListPage />}
+          <Route path="/profile" element={<RequireLogin><ProfilePage /></RequireLogin>} />
+          <Route path="/profile/edit" element={<RequireLogin><ProfileEditPage /></RequireLogin>} />
+          <Route path="/profile/:accountname" element={<RequireLogin><ProfilePage /></RequireLogin>} />
+          <Route path="/profile/:accountname/followers" element={<RequireLogin><FollowListPage /></RequireLogin>}
           />
-          <Route path="/profile/:accountname/followings" element={<FollowListPage />}
+          <Route path="/profile/:accountname/followings" element={<RequireLogin><FollowListPage /></RequireLogin>}
           />
-          <Route path="/chat" element={<ChatListPage />} />
-          <Route path="/chat/:chatId" element={<MessageRoom />} />
+          <Route path="/chat" element={<RequireLogin><ChatListPage /></RequireLogin>} />
+          <Route path="/chat/:chatId" element={<RequireLogin><MessageRoom /></RequireLogin>} />
           
           <Route path="*" element={<Page404 />} />
 

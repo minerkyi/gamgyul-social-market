@@ -15,7 +15,7 @@
   background-color: #ffffff;
 }
 
-.error-icon {
+.feed-icon {
   width: 100px;
   height: 100px;
   margin-bottom: 20px;
@@ -24,7 +24,7 @@
   background-repeat: no-repeat;
 }
 
-.error-message {
+.feed-message {
   margin-bottom: 20px;
 
   color: var(--text-sub-color);
@@ -33,28 +33,16 @@
 }
 
 .retry-button {
-  background-color: var(--main-color);
-  color: #ffffff;
+  padding: 12px 34px;
+
   border: none;
-  border-radius: 25px;
-  padding: 13px 34px;
+  border-radius: 44px;
+  background-color: var(--main-color);
+
+  color: #ffffff;
   font-size: 14px;
   font-weight: 500;
-  cursor: pointer;
+
   transition: background-color 0.2s ease;
-}
-
-.retry-button:hover {
-  background-color: #e55a2b;
-}
-
-.red-dot {
-  position: absolute;
-  left: -8px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 4px;
-  background-color: #ff0000;
-  border-radius: 50%;
+  cursor: pointer;
 }
