@@ -23,47 +23,40 @@ import EmailLoginPage from './pages/login/EmailLoginPage';
 import LoginMain from './pages/login/LoginMain';
 import SignupPage from './pages/login/SignupPage';
 import SignupProfilePage from './pages/login/SignupProfilePage';
+import HomeFeed from './pages/home/HomeFeed';
 
 function App() {
   return (
     <UserProvider>
       <BrowserRouter basename="/gamgyul-social-market">
+        <Routes>
+          <Route path="/" element={<HomeFeed />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/product/create" element={<Products />} />
+          <Route path="/product/update/:id" element={<Products />} />
+          <Route path="/post/comments/:id" element={<Post />} />
+          <Route path="/post/create" element={<CreatePost />} />
+          <Route path="/post/update/:id" element={<CreatePost />} />
+          <Route path="/sample" element={<Sample />} />
+
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/profile/edit" element={<ProfileEditPage />} />
+          <Route path="/profile/:accountname" element={<ProfilePage />} />
+          <Route path="/profile/:accountname/followers" element={<FollowListPage />}
+          />
+          <Route path="/profile/:accountname/followings" element={<FollowListPage />}
+          />
+          <Route path="/chat" element={<ChatListPage />} />
+          <Route path="/chat/:chatId" element={<MessageRoom />} />
+          
+          <Route path="*" element={<Page404 />} />
+
+          <Route path='/login/signup' element={<SignupPage />} />
+          <Route path='/login/signup/profile' element={<SignupProfilePage />} />
+          <Route path='/login' element={<LoginMain />} />
+          <Route path='/login/email' element={<EmailLoginPage />} />
+        </Routes>
         <FooterProvider>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/home" element={<HomePage />} />
-            <Route path="/search" element={<SearchPage />} />
-            <Route path="/product/create" element={<Products />} />
-            <Route path="/product/update/:id" element={<Products />} />
-            <Route path="/post/comments/:id" element={<Post />} />
-            <Route path="/post/create" element={<CreatePost />} />
-            <Route path="/post/update/:id" element={<CreatePost />} />
-            <Route path="/sample" element={<Sample />} />
-
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/profile/edit" element={<ProfileEditPage />} />
-            <Route path="/profile/:accountname" element={<ProfilePage />} />
-            <Route
-              path="/profile/:accountname/followers"
-              element={<FollowListPage />}
-            />
-            <Route
-              path="/profile/:accountname/followings"
-              element={<FollowListPage />}
-            />
-            <Route path="/chat" element={<ChatListPage />} />
-            <Route path="/chat/:chatId" element={<MessageRoom />} />
-
-            <Route path="*" element={<Page404 />} />
-
-            <Route path="/login/signup" element={<SignupPage />} />
-            <Route
-              path="/login/signup/profile"
-              element={<SignupProfilePage />}
-            />
-            <Route path="/login" element={<LoginMain />} />
-            <Route path="/login/email" element={<EmailLoginPage />} />
-          </Routes>
           <Footer />
         </FooterProvider>
       </BrowserRouter>

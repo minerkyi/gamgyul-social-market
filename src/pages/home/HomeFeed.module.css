@@ -1,0 +1,60 @@
+.main {
+  margin-bottom: 84px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+
+  width: 100%;
+  margin-top: 220px;
+
+  background-color: #ffffff;
+}
+
+.error-icon {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 20px;
+
+  background-image: url(../../assets/symbol-logo-gray.png);
+  background-repeat: no-repeat;
+}
+
+.error-message {
+  margin-bottom: 20px;
+
+  color: var(--text-sub-color);
+  font-size: 14px;
+  text-align: center;
+}
+
+.retry-button {
+  background-color: var(--main-color);
+  color: #ffffff;
+  border: none;
+  border-radius: 25px;
+  padding: 13px 34px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.retry-button:hover {
+  background-color: #e55a2b;
+}
+
+.red-dot {
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 4px;
+  background-color: #ff0000;
+  border-radius: 50%;
+}
