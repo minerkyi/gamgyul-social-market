@@ -1,0 +1,20 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  
+  width: 100%;
+  margin-top: 246px;
+
+  background-color: #ffffff;
+}
+
+.splash-icon {
+  width: 200px;
+  height: 200px;
+  margin-bottom: 30px;
+  background-image: url(../assets/full-logo.png);
+  background-repeat: no-repeat;
+}

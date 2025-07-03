@@ -191,7 +191,7 @@ export default function Products() {
 
   return (
     <>
-      <Header title={'상품 등록'} type={'products'} onClick={handleSave} disabled={disabled} />
+      <Header title={'상품 등록'} type={'product'} onClick={handleSave} disabled={disabled} />
       <main className={styles["content"]}>
         <section className={styles["image-section"]}>
           <h2 className={styles["section-title"]}>이미지 등록</h2>

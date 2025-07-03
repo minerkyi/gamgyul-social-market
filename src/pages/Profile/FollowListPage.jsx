@@ -31,7 +31,7 @@ const mockFollowerData = [
 function FollowListPage() {
   return (
     <div className={styles.pageContainer}>
-      <Header type="title-with-back" title="Followers" />
+      <Header type="title-with-back" title="Followers" isTitleVisible={true} />
 
       <main className={styles.mainContent}>
         <ul className={styles.userList}>

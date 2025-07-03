@@ -191,7 +191,7 @@ export default function CreatePost() {
 
   return (
     <>
-      <Header title={id ? '게시글 수정' : '게시글 작성'} type={'products'} onClick={handleUpload} disabled={disabled} />
+      <Header title={id ? '게시글 수정' : '게시글 작성'} type="post" onClick={handleUpload} disabled={disabled} />
       <h2 className="sr-only">{id ? '게시글 수정' : '게시글 작성'}</h2>
       <section className={styles["input-area"]}>
         <aside className={styles["profile-icon"]}>

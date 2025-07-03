@@ -1,18 +1,6 @@
 .main {
+  padding-top: 48px;
   margin-bottom: 84px;
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-
-  width: 100%;
-  margin-top: 220px;
-
-  background-color: #ffffff;
 }
 
 .feed-icon {
