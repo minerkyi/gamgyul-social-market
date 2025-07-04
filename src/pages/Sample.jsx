@@ -12,7 +12,7 @@ export default function Sample() {
     },
     body: JSON.stringify({
       user: {
-        email: 'test@test.com',
+        email: 'test2@test.com',
         password: '1234!@#$',
       },
     }),
