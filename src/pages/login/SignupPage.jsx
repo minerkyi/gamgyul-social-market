@@ -1,9 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/common/Button/Button";
 import InputField from "../../components/common/Input/InputField";
 import { useFetchApi } from "../../hooks/useFetchApi";
 import styles from "./SignupPage.module.css";
+
+const debounce = (func, delay) => {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func(...args);
+    }, delay);
+  };
+};
 
 function SignupPage() {
   const navigate = useNavigate();
@@ -19,38 +29,41 @@ function SignupPage() {
     window.history.forward();
   }, []);
 
-  const emailValidation = async (e) => {
-    const newEmail = e.target.value;
-    setEmail(newEmail);
-    console.log(newEmail);
+  const debounceEmailValidation = useRef(
+    debounce(async (newEmail) => {
+      if (newEmail === "") {
+        setIsEmailValid("");
+        return;
+      }
 
-    if (newEmail === "") {
-      setIsEmailValid("");
-      return;
-    }
-
-    const path = "/user/emailvalid";
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user: {
-          email: newEmail,
+      const path = "/user/emailvalid";
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      }),
-    };
+        body: JSON.stringify({
+          user: {
+            email: newEmail,
+          },
+        }),
+      };
 
-    const [data, isErr] = await fetchData(path, options);
-    console.log("데이터 :", data);
-    console.log("에러 : ", isErr);
+      const [data, isErr] = await fetchData(path, options);
+      console.log("데이터 :", data);
+      console.log("에러 : ", isErr);
 
-    if (data.message === "사용 가능한 이메일 입니다.") {
-      setIsEmailValid("");
-      return;
-    }
-    setIsEmailValid(data.message);
+      if (data.message === "사용 가능한 이메일 입니다.") {
+        setIsEmailValid("");
+        return;
+      }
+      setIsEmailValid(data.message);
+    }, 500)
+  ).current;
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    debounceEmailValidation(e.target.value);
   };
 
   const passwordValidation = (e) => {
@@ -73,7 +86,6 @@ function SignupPage() {
   return (
     <div className={styles.background}>
       <div className={styles.container}>
-        {/* <div> */}
         <h2 className={styles.title}>이메일로 회원가입</h2>
         <form className={styles.form} onSubmit={handleNext}>
           <InputField
@@ -81,7 +93,7 @@ function SignupPage() {
             value={email}
             labelText="이메일"
             placeholder="이메일 주소를 입력해 주세요."
-            onChange={emailValidation}
+            onChange={handleEmailChange}
             error={isEmailValid}
           />
           <InputField

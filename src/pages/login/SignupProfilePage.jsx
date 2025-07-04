@@ -5,9 +5,19 @@ import { useFetchApi } from "../../hooks/useFetchApi";
 import { useUser } from "../../contexts/userContext";
 
 import basicProfileImage from "../../assets/basic-profile-img.png";
-import imageUploadIcon from "../../assets/upload-file.png";
+import imageUploadIcon from "../../assets/icon/icon-upload.png";
 import Button from "../../components/common/Button/Button";
 import InputField from "../../components/common/Input/InputField";
+
+const debounce = (func, delay) => {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func(...args);
+    }, delay);
+  };
+};
 
 function SignupProfilePage() {
   const location = useLocation();
@@ -46,41 +56,46 @@ function SignupProfilePage() {
     }
   }, [username]);
 
-  // 계정ID 유효성
-  useEffect(() => {
-    const regex = /^[a-zA-Z0-9_.]+$/;
-    if (regex.test(accountname) && accountname.length > 0) {
-      accountnameValidation();
-    } else {
-      setIsAccountIdValid("영문, 숫자, 밑줄, 마침표만 사용할 수 있습니다.");
-    }
-  }, [accountname]);
+  // 계정ID 유효성 디바운싱
+  const debounceAccountnameValidation = useRef(
+    debounce(async (accountname) => {
+      const regex = /^[a-zA-Z0-9_.]+$/;
+      if (!regex.test(accountname) || accountname.length === 0) {
+        setIsAccountIdValid("영문, 숫자, 밑줄, 마침표만 사용할 수 있습니다.");
+        return;
+      }
 
-  const accountnameValidation = async () => {
-    const path = "/user/accountnamevalid";
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user: {
-          accountname: accountname,
+      const path = "/user/accountnamevalid";
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      }),
-    };
+        body: JSON.stringify({
+          user: {
+            accountname: accountname,
+          },
+        }),
+      };
 
-    const [data, isErr] = await fetchData(path, options);
+      const [data, isErr] = await fetchData(path, options);
 
-    console.log("데이터 :", data);
-    console.log("데이터.메세지 :", data.message);
-    console.log("에러 : ", isErr);
+      console.log("데이터 :", data);
+      console.log("데이터.메세지 :", data.message);
+      console.log("에러 : ", isErr);
 
-    if (data.message === "사용 가능한 계정ID 입니다.") {
-      setIsAccountIdValid("");
-    } else {
-      setIsAccountIdValid("이미 사용 중인 ID입니다.");
-    }
+      if (data.message === "사용 가능한 계정ID 입니다.") {
+        setIsAccountIdValid("");
+      } else {
+        setIsAccountIdValid("이미 사용 중인 ID입니다.");
+      }
+    }, 5000)
+  ).current;
+
+  const handleAccountnameChange = (e) => {
+    setAccountname(e.target.value);
+    debounceAccountnameValidation(e.target.value);
+    // console.log("start", e.target.value, new Date());
   };
 
   const handleProfileFileChange = (e) => {
@@ -205,7 +220,7 @@ function SignupProfilePage() {
             inputId="accountname"
             placeholder="영문, 숫자, 밑줄, 마침표만 사용 가능합니다."
             error={accountname ? isAccountIdValid : ""}
-            onChange={(e) => setAccountname(e.target.value)}
+            onChange={handleAccountnameChange}
           />
           <InputField
             type="textarea"
