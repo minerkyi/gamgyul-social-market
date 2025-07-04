@@ -17,10 +17,10 @@ export const FooterProvider = ({ children }) => {
   ];
 
   const isVisibled = visiblePathPatterns.some((pattern) => {
-    if (pattern === '/chat' || pattern === '/' || pattern === '/profile') {
-      return path === pattern;
+    if (pattern === '/profile') {
+      return path.startsWith(pattern);
     }
-    return path.startsWith(pattern);
+    return path === pattern;
   });
 
   return (
