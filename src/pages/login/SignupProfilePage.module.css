@@ -6,7 +6,6 @@
   height: 100vh;
   background-color: var(--placeholder-color);
 }
-
 .container {
   width: 390px;
   height: 100%;
@@ -37,30 +36,33 @@
   font-weight: 400;
   color: var(--text-sub-color);
 }
-
-
 .imageSection {
   margin: 0 auto 30px;
   position: relative;
   width: 110px;
   height: 110px;
 }
-
-.imageSection::after {
-  content: "";
+.imageUploadButton {
   position: absolute;
   right: 0;
   bottom: 0;
   width: 36px;
   height: 36px;
-  background-color: #f26e22;
-  background-image: url(../../assets/icon/icon-upload.png);
-  background-repeat: no-repeat;
-  background-position: center;
+  background: #f26e22;
   border-radius: 50%;
-  box-sizing: border-box;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
 }
-
+.imageUploadIcon {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  pointer-events: none;
+}
 .profileImage {
   width: 100%;
   height: 100%;

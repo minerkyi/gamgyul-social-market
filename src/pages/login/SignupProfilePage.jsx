@@ -5,6 +5,7 @@ import { useFetchApi } from "../../hooks/useFetchApi";
 import { useUser } from "../../contexts/userContext";
 
 import basicProfileImage from "../../assets/basic-profile-img.png";
+import imageUploadIcon from "../../assets/upload-file.png";
 import Button from "../../components/common/Button/Button";
 import InputField from "../../components/common/Input/InputField";
 
@@ -168,7 +169,6 @@ function SignupProfilePage() {
               src={profileImagePreview}
               alt="현재 프로필 이미지"
               className={styles.profileImage}
-              onClick={() => fileInputRef.current.click()}
             />
             <input
               type="file"
@@ -177,6 +177,17 @@ function SignupProfilePage() {
               style={{ display: "none" }}
               onChange={handleProfileFileChange}
             />
+            <button
+              type="button"
+              className={styles.imageUploadButton}
+              onClick={() => fileInputRef.current.click()}
+            >
+              <img
+                src={imageUploadIcon}
+                alt="프로필 이미지 업로드 아이콘"
+                className={styles.imageUploadIcon}
+              />
+            </button>
           </div>
           <InputField
             type="text"
