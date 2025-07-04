@@ -1,24 +1,20 @@
 .container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background-color: var(--main-color);
+  position: relative;
+  
+  width: 100%;
+  margin-top: 246px;
+
+  background-color: #ffffff;
 }
 
-.logo {
-  width: 150px;
-  height: 150px;
-  animation: fade-in 1s ease-in-out;
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.splash-icon {
+  width: 200px;
+  height: 200px;
+  margin-bottom: 30px;
+  background-image: url(../assets/full-logo.png);
+  background-repeat: no-repeat;
 }

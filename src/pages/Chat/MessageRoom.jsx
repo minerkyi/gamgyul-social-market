@@ -61,8 +61,7 @@ function MessageRoom() {
   return (
     <div className={styles.pageContainer}>
       <div className={styles.headerContainer}>
-        <Header type="profile" onClick={handleOpenLeaveModal} />
-        <h1 className={styles.headerTitle}>{chatPartner.userName}</h1>
+        <Header type="room" title={chatPartner.userName} onClick={handleOpenLeaveModal} isTitleVisible={true} />
       </div>
 
       <main className={styles.mainContent}>

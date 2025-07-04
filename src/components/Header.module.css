@@ -1,3 +1,17 @@
+.container {
+  display: felx;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+
+  background-color: #f2f2f2;
+
+  z-index: 200;
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -14,6 +28,7 @@
   flex: 1;
 
   margin: 0;
+  padding-left: 10px;
 
   font-size: 14px;
   font-weight: 400;
@@ -25,6 +40,10 @@
   font-weight: 500;
 }
 
+.header-title.room {
+  font-weight: 500;
+}
+
 .search-icon {
   width: 24px;
   height: 24px;
@@ -33,6 +52,8 @@
 .back-button {
   display: flex;
   align-items: center;
+
+  padding: 0;
 
   background: none;
   border: none;

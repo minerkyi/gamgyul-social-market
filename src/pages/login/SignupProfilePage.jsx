@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import styles from "./SignupProfilePage.module.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useFetchApi } from "../../hooks/useFetchApi";
+import { useUser } from "../../contexts/userContext";
 
 import basicProfileImage from "../../assets/basic-profile-img.png";
-import Header from "../../components/Header";
 import Button from "../../components/common/Button/Button";
 import InputField from "../../components/common/Input/InputField";
 
@@ -21,6 +21,13 @@ function SignupProfilePage() {
   const [isAccountIdValid, setIsAccountIdValid] = useState("");
 
   const { fetchData } = useFetchApi();
+
+  const { saveUser } = useUser();
+
+  const [profileImageFile, setProfileImageFile] = useState(null);
+  const [profileImagePreview, setProfileImagePreview] =
+    useState(basicProfileImage);
+  const fileInputRef = useRef(null);
 
   const isFormValid =
     isUsernameValid === "" &&
@@ -75,16 +82,43 @@ function SignupProfilePage() {
     }
   };
 
-  // 저장
+  const handleProfileFileChange = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      setProfileImageFile(file);
+      setProfileImagePreview(URL.createObjectURL(file));
+    }
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
-    console.log(username, accountname, email, password, intro);
     if (!isFormValid) {
       return;
     }
 
-    const path = "/user";
-    const options = {
+    //이미지 처리
+    let imageUrl = basicProfileImage;
+    if (profileImageFile) {
+      const formData = new FormData();
+      formData.append("image", profileImageFile);
+      try {
+        const res = await fetch("https://dev.wenivops.co.kr/image/uploadfile", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        const filename =
+          data.filename || (Array.isArray(data) && data[0]?.filename);
+        if (filename) {
+          imageUrl = `https://dev.wenivops.co.kr/services/mandarin/${filename}`;
+        }
+      } catch {
+        //
+      }
+    }
+    // 회원가입
+    const signupPath = "/user";
+    const signupOptions = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -96,29 +130,52 @@ function SignupProfilePage() {
           username: username,
           accountname: accountname,
           intro: intro,
-          // TODO: 이미지 처리
-          image:
-            "https://dev.wenivops.co.kr/services/mandarin/1641906557953.png",
+          image: imageUrl,
         },
       }),
     };
 
-    const [data, isErr] = await fetchData(path, options);
+    const [data, isErr] = await fetchData(signupPath, signupOptions);
     console.log("데이터 :", data);
     console.log("에러 : ", isErr);
 
-    navigate("/login/email");
+    // 자동 로그인
+    const loginPath = "/user/login";
+    const loginOptions = {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        user: { email, password },
+      }),
+    };
+
+    const [loginData] = await fetchData(loginPath, loginOptions);
+
+    saveUser(loginData);
+    navigate("/");
   };
 
   return (
     <div className={styles.background}>
       <div className={styles.container}>
+        <h2 className={styles.title}>프로필 설정</h2>
+        <h3 className={styles.text}>나중에 언제든지 변경할 수 있습니다.</h3>
         <form className={styles.form} onSubmit={handleSave}>
           <div className={styles.imageSection}>
             <img
-              src={basicProfileImage}
+              src={profileImagePreview}
               alt="현재 프로필 이미지"
               className={styles.profileImage}
+              onClick={() => fileInputRef.current.click()}
+            />
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              onChange={handleProfileFileChange}
             />
           </div>
           <InputField
@@ -127,7 +184,7 @@ function SignupProfilePage() {
             labelText="사용자 이름"
             inputId="username"
             placeholder="2~10자 이내여야 합니다."
-            error={isUsernameValid}
+            error={username ? isUsernameValid : ""}
             onChange={(e) => setUsername(e.target.value)}
           />
           <InputField
@@ -136,7 +193,7 @@ function SignupProfilePage() {
             labelText="계정 ID"
             inputId="accountname"
             placeholder="영문, 숫자, 밑줄, 마침표만 사용 가능합니다."
-            error={isAccountIdValid}
+            error={accountname ? isAccountIdValid : ""}
             onChange={(e) => setAccountname(e.target.value)}
           />
           <InputField

@@ -1,24 +1,36 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import symbolLogo from '../assets/symbol-logo-W.png';
 import styles from './Splash.module.css';
+import { useNavigate } from 'react-router-dom';
 
-function Splash() {
+export default function Splash() {
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      navigate('/home');
-    }, 1500);
 
-    return () => clearTimeout(timer);
-  }, [navigate]);
+    const user = localStorage.getItem('user');
+    let userInfo = null;
+    
+    if(user) {
+      try {
+        userInfo = JSON.parse(user);
+      } catch(e) {}
+    }
+    
+    const timeoutId = setTimeout(() => {
+      if(!userInfo?.token) {
+        navigate('/login', {replace: true});
+      } else {
+        navigate('/home', {replace: true});
+      }
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, []);
 
   return (
     <div className={styles.container}>
-      <img src={symbolLogo} alt="감귤마켓 로고" className={styles.logo} />
+      <div className={styles["splash-icon"]} />
     </div>
-  );
+  )
 }
-
-export default Splash;

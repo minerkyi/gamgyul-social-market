@@ -22,10 +22,8 @@ export default function CreatePost() {
 
   const {id} = useParams();
   
-  const token = localStorage.getItem('token');
-  if(!token) {
-    navigate('/login');
-  }
+  const user = JSON.parse(localStorage.getItem('user'));
+  const token = user.token;
 
   const handleUpload = async () => {
     let [data, isErr] = [];
@@ -95,6 +93,8 @@ export default function CreatePost() {
     previewImgs.forEach((url) => {
       URL.revokeObjectURL(url);
     });
+    
+    navigate(`/profile/${user.accountname}`);
   };
 
   const handlePost = (e) => {
@@ -156,9 +156,9 @@ export default function CreatePost() {
   }, [seletedImgs, post]);
 
   useEffect(() => {
-    const profileImg = localStorage.getItem('profileimage');
+    const profileImg = user.image;
     if(profileImg) {
-      setImage(localStorage.getItem('profileimage'));
+      setImage(profileImg);
     }
 
     if(id) {
@@ -191,7 +191,7 @@ export default function CreatePost() {
 
   return (
     <>
-      <Header title={id ? '게시글 수정' : '게시글 작성'} type={'products'} onClick={handleUpload} disabled={disabled} />
+      <Header title={id ? '게시글 수정' : '게시글 작성'} type="post" onClick={handleUpload} disabled={disabled} />
       <h2 className="sr-only">{id ? '게시글 수정' : '게시글 작성'}</h2>
       <section className={styles["input-area"]}>
         <aside className={styles["profile-icon"]}>
