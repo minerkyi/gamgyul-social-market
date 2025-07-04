@@ -190,7 +190,6 @@ function ProfilePage() {
     }
 
     const updatedProfile = data.profile ? data.profile : data;
-
     setProfile(updatedProfile);
     refetch();
   };
@@ -203,7 +202,6 @@ function ProfilePage() {
       <div className={styles.headerWrapper}>
         <Header type="profile" onClick={handleOpenSettingsModal} />
       </div>
-
       <main className={styles.content}>
         <ProfileInfo
           image={profile.image}
@@ -227,9 +225,7 @@ function ProfilePage() {
         />
         <PostList posts={posts} onMoreClick={handleOpenPostModal} />
       </main>
-
       <Footer />
-
       <Modal
         isOpen={isProductModalOpen}
         onClose={() => setIsProductModalOpen(false)}
@@ -260,7 +256,6 @@ function ProfilePage() {
           </ul>
         </div>
       </Modal>
-
       <Modal
         isOpen={isSettingsModalOpen}
         onClose={() => setIsSettingsModalOpen(false)}
@@ -286,7 +281,6 @@ function ProfilePage() {
           </ul>
         </div>
       </Modal>
-
       <Modal
         isOpen={isPostModalOpen}
         onClose={() => setIsPostModalOpen(false)}
@@ -312,7 +306,6 @@ function ProfilePage() {
           </ul>
         </div>
       </Modal>
-
       {confirmModalConfig && (
         <ConfirmModal
           isOpen={!!confirmModalConfig}

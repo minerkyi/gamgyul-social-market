@@ -83,7 +83,6 @@ function App() {
               }
             />
             <Route path="/sample" element={<Sample />} />
-
             <Route
               path="/profile"
               element={
@@ -140,9 +139,7 @@ function App() {
                 </RequireLogin>
               }
             />
-
             <Route path="*" element={<Page404 />} />
-
             <Route path="/login/signup" element={<SignupPage />} />
             <Route
               path="/login/signup/profile"
