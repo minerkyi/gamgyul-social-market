@@ -25,6 +25,7 @@ import LoginMain from './pages/login/LoginMain';
 import SignupPage from './pages/login/SignupPage';
 import SignupProfilePage from './pages/login/SignupProfilePage';
 import Splash from './pages/Splash';
+import ErrorPage from './pages/ErrorPage';
 
 function App() {
   return (
@@ -58,6 +59,8 @@ function App() {
             <Route path='/login/signup/profile' element={<SignupProfilePage />} />
             <Route path='/login' element={<LoginMain />} />
             <Route path='/login/email' element={<EmailLoginPage />} />
+
+            <Route path="/error" element={<ErrorPage />} />
           </Routes>
           <FooterProvider>
             <Footer />

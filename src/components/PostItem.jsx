@@ -7,13 +7,14 @@ import iconHeart from '../assets/icon/icon-heart.png';
 import iconHeartActive from '../assets/icon/icon-heart-active.png';
 import iconMessageCircle from '../assets/icon/icon-message-circle.svg';
 import { useFetchApi } from '../hooks/useFetchApi';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import BottomModal from './BottomModal';
 import ConfirmModal from './common/ConfirmModal';
 
 export default function PostItem({data, isComments = false, commentsCount = 0}) {
 
   const navigate = useNavigate();
+  const location = useLocation();
   const {fetchData} = useFetchApi();
   const [postData, setPostData] = useState(data);
   const authorData = postData.author;
@@ -41,7 +42,11 @@ export default function PostItem({data, isComments = false, commentsCount = 0}) 
       alert(data.message);
       return;
     } else {
-      navigate(`/profile/${accountname}`);
+      if(location.pathname === `/profile/${accountname}`) {
+        navigate(0);
+      } else {
+        navigate(`/profile/${accountname}`);
+      }
     }
   };
   const handleUpdate = () => {
