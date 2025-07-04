@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../../components/common/Button/Button";
 import InputField from "../../components/common/Input/InputField";
 import { useFetchApi } from "../../hooks/useFetchApi";
@@ -8,12 +8,17 @@ import styles from "../../pages/login/EmailLoginPage.module.css";
 
 function EmailLoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { saveUser } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
 
   const { fetchData } = useFetchApi();
+
+  useEffect(() => {
+    window.history.forward();
+  }, []);
 
   const goToSignupPage = () => {
     navigate("/login/signup");
@@ -42,7 +47,8 @@ function EmailLoginPage() {
     if (!isErr) {
       saveUser(data);
       setLoginError("");
-      navigate("/");
+      const from = location.state?.from?.pathname || '/';
+      navigate(from, {replace: true});
     } else {
       setLoginError(data.message);
     }
