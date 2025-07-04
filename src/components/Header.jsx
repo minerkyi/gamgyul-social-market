@@ -6,6 +6,11 @@ import iconArrow from '../assets/icon/icon-arrow-left.png';
 import iconMore from '../assets/icon/icon-more-vertical.png';
 import iconSearch from '../assets/icon/icon-search.png';
 
+import BottomModal from './BottomModal';
+import ConfirmModal from './common/ConfirmModal';
+import { useState } from 'react';
+import { useUser } from '../contexts/userContext';
+
 export default function Header(props) {
   const {
     title,
@@ -18,7 +23,20 @@ export default function Header(props) {
   } = props;
   const navigate = useNavigate();
 
-  
+  const {clearUser} = useUser();
+  const [isOpenPostModal, setIsOpenPostModal] = useState(false);
+  const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
+
+  const children = [
+    {title:'설정 및 개인정보', event:() => navigate('/profile/edit')},
+    {title:'로그아웃', event:() => setIsOpenConfirmModal(true)}
+  ];
+
+  const handleLogout = () => {
+    clearUser();
+    navigate('/login');
+  };
+
   const DefaultH1 = () => {
     return (
       <h1 className={`${styles['header-title']} ${isTitleVisible ? '' : 'sr-only'}`}>{title}</h1>
@@ -89,9 +107,13 @@ export default function Header(props) {
 
   const MoreButton = () => {
     return (
-      <button className={styles['empty-button']} onClick={onClick}>
-        <MoreImg />
-      </button>
+      <>
+        <button className={styles['empty-button']} onClick={() => setIsOpenPostModal(true)}>
+          <MoreImg />
+        </button>
+        <BottomModal isOpen={isOpenPostModal} setIsOpen={setIsOpenPostModal} children={children} />
+        <ConfirmModal isOpen={isOpenConfirmModal} onClose={() => setIsOpenConfirmModal(false)} message="로그아웃하시겠어요?" confirmText="로그아웃" onConfirm={handleLogout} />
+      </>
     );
   }
 

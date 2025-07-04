@@ -1,3 +1,16 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+
+  width: 100%;
+  margin-top: 200px;
+
+  background-color: #ffffff;
+}
+
 .main {
   padding-top: 48px;
   margin-bottom: 84px;
