@@ -7,10 +7,18 @@ export default function Splash() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('index');
+
+    const user = localStorage.getItem('user');
+    let userInfo = null;
+    
+    if(user) {
+      try {
+        userInfo = JSON.parse(user);
+      } catch(e) {}
+    }
+    
     const timeoutId = setTimeout(() => {
-      const token = localStorage.getItem('token');
-      if(!token) {
+      if(!userInfo?.token) {
         navigate('/login', {replace: true});
       } else {
         navigate('/home', {replace: true});

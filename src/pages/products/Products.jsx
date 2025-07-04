@@ -12,6 +12,7 @@ export default function Products() {
   const [seletedImg, setSeletedImg] = useState(null);
   const [imgPreview, setImgPreview] = useState(null);
   const [image, setImage] = useState(null);
+  const [objectUrl, setObjectUrl] = useState(null);
 
   const [itemName, setItemName] = useState('');
   const [price, setPrice] = useState(0);
@@ -21,7 +22,8 @@ export default function Products() {
   const [disabled, setDisabled] = useState(true);
   
   const {id} = useParams();
-  const token = localStorage.getItem('token');
+  const user = JSON.parse(localStorage.getItem('user'));
+  const token = user.token;
   const {fetchData, result} = useFetchApi();
 
   useEffect(() => {
@@ -56,7 +58,9 @@ export default function Products() {
     const file = e.target.files[0];
     if(file) {
       setSeletedImg(file);
-      setImgPreview(URL.createObjectURL(file));
+      const objUrl = URL.createObjectURL(file);
+      setImgPreview(objUrl);
+      setObjectUrl(objUrl);
     } else {
       setSeletedImg(null);
       if(result) {
@@ -168,25 +172,27 @@ export default function Products() {
         if(isError) {
           alert(data.message);
           return;
-        } else {
-          setItemName('');
-          setPrice(0);
-          setDisplayPrice('');
-          setLink('');
-          setSeletedImg(null);
-          setImgPreview(null);
         }
+
+        setItemName('');
+        setPrice(0);
+        setDisplayPrice('');
+        setLink('');
+        setSeletedImg(null);
+        setImgPreview(null);
+
+        navigate(`/profile/${user.accountname}`);
       }
     }
   };
 
   useEffect(() => {
     return () => {
-      if(imgPreview) {
-        URL.revokeObjectURL(imgPreview);
+      if(objectUrl) {
+        URL.revokeObjectURL(objectUrl);
       }
     }
-  }, [imgPreview]);
+  }, [objectUrl]);
 
 
   return (

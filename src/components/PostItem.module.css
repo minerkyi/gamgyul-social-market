@@ -105,10 +105,12 @@
 }
 
 .carousel {
+  position: relative;
+
   margin-top: 16px;
   margin-left: 54px;
-  position: relative;
   overflow: hidden;
+  
   border-radius: 10px;
 }
 
@@ -118,9 +120,6 @@
   height: 228px;
 
   background-color: #f2f2f2;
-
-  transition: transform 0.5s ease-in-out;
-  transform: translateX(calc(-100% * var(--index, 0)));
 }
 
 .image {

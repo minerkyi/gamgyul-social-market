@@ -25,8 +25,9 @@ export default function Post() {
   const [commentsData, setCommentsData] = useState([]);
 
   const {id} = useParams();
-  const token = localStorage.getItem('token');
-  const accountname = localStorage.getItem('accountname');
+  const user = JSON.parse(localStorage.getItem('user'));
+  const token = user.token;
+  const accountname = user.accountname;
   const {fetchData} = useFetchApi();
   
   const getComments = async () => {
@@ -165,7 +166,7 @@ export default function Post() {
     };
     postData();
 
-    const profileImage = localStorage.getItem('profileimage');
+    const profileImage = user.image;
     if(profileImage) {
       setImage(profileImage);
     }
