@@ -11,39 +11,34 @@
   background-color: #ffffff;
 }
 
-.main {
-  padding-top: 48px;
-  margin-bottom: 84px;
-}
+.error-icon {
+  width: 158px;
+  height: 158px;
+  margin-bottom: 30px;
 
-.feed-icon {
-  width: 100px;
-  height: 100px;
-  margin-bottom: 20px;
-
-  background-image: url(../../assets/symbol-logo-gray.png);
+  background-image: url(../assets/icon-error.png);
   background-repeat: no-repeat;
 }
 
-.feed-message {
-  margin-bottom: 20px;
+.error-message {
+  margin-bottom: 30px;
 
-  color: var(--text-sub-color);
+  color: #666666;
   font-size: 14px;
   text-align: center;
 }
 
 .retry-button {
-  padding: 12px 34px;
+  padding: 12px 24px;
 
+  background-color: #ff6b35;
   border: none;
-  border-radius: 44px;
-  background-color: var(--main-color);
+  border-radius: 25px;
 
   color: #ffffff;
   font-size: 14px;
   font-weight: 500;
 
-  transition: background-color 0.2s ease;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
