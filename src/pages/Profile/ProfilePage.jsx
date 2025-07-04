@@ -12,6 +12,8 @@ import Modal from '../../components/common/Modal';
 import PostList from '../../components/ProfileView/PostList';
 import ProfileStore from '../../components/ProfileView/ProfileStore';
 import ProfileInfo from '../../components/common/ProfileInfo';
+import { useProfileRefetch } from '../../contexts/ProfileRefetchContext';
+import { useFetchApi } from '../../hooks/useFetchApi';
 import MyProfileAction from './Myview/MyProfileAction';
 import YourProfileAction from './Yourview/YourProfileAction';
 
@@ -31,56 +33,52 @@ function ProfilePage() {
   const navigate = useNavigate();
   const myAccountname = localStorage.getItem('accountname');
   const isMyProfile = !accountname || accountname === myAccountname;
+  const { fetchData } = useFetchApi();
+  const { refetchKey, refetch } = useProfileRefetch();
 
   useEffect(() => {
     const fetchAllData = async () => {
-      const API_URL = 'https://dev.wenivops.co.kr/services/mandarin';
-      const token = localStorage.getItem('token');
-      const targetAccountname = isMyProfile ? myAccountname : accountname;
-
-      if (!targetAccountname) {
-        navigate('/');
-        return;
-      }
-
       setLoading(true);
-      try {
-        const [profileRes, productRes, postRes] = await Promise.all([
-          fetch(`${API_URL}/profile/${targetAccountname}`, {
-            method: 'GET',
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch(`${API_URL}/product/${targetAccountname}`, {
-            method: 'GET',
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch(`${API_URL}/post/${targetAccountname}/userpost`, {
-            method: 'GET',
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-        ]);
+      const targetAccountname = isMyProfile ? myAccountname : accountname;
+      const token = localStorage.getItem('token');
+      const commonHeaders = {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      };
 
-        if (!profileRes.ok) {
-          throw new Error(`프로필 API 요청 실패: ${profileRes.status}`);
-        }
+      const [profileData, profileErr] = await fetchData(
+        `/profile/${targetAccountname}`,
+        { headers: commonHeaders }
+      );
+      const [productData] = await fetchData(`/product/${targetAccountname}`, {
+        headers: commonHeaders,
+      });
+      const [postData] = await fetchData(
+        `/post/${targetAccountname}/userpost`,
+        { headers: commonHeaders }
+      );
 
-        const profileData = await profileRes.json();
-        const productData = await productRes.json();
-        const postData = await postRes.json();
-
-        setProfile(profileData.profile);
-        setProducts(productData.product || []);
-        setPosts(postData.post || []);
-      } catch (error) {
-        console.error('데이터를 불러오는 중 오류 발생:', error);
+      if (profileErr) {
+        console.error('프로필 정보 로딩 실패:', profileData.message);
         setProfile(null);
-      } finally {
-        setLoading(false);
+      } else {
+        setProfile(profileData.profile);
       }
+
+      setProducts(productData.product || []);
+      setPosts(postData.post || []);
+      setLoading(false);
     };
 
     fetchAllData();
-  }, [accountname, myAccountname, isMyProfile, navigate]);
+  }, [
+    accountname,
+    myAccountname,
+    isMyProfile,
+    navigate,
+    refetchKey,
+    fetchData,
+  ]);
 
   const handleOpenProductModal = (product) => {
     setSelectedProduct(product);
@@ -113,30 +111,22 @@ function ProfilePage() {
 
   const handleConfirmDeleteProduct = async () => {
     if (!selectedProduct) return;
-    const API_URL = 'https://dev.wenivops.co.kr/services/mandarin';
     const token = localStorage.getItem('token');
-    const requestUrl = `${API_URL}/product/${selectedProduct.id}`;
-    try {
-      const response = await fetch(requestUrl, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-type': 'application/json',
-        },
-      });
-      const data = await response.json();
-      if (response.ok) {
-        alert('상품이 삭제되었습니다.');
-        setProducts(products.filter((p) => p.id !== selectedProduct.id));
-        setConfirmModalConfig(null);
-      } else {
-        throw new Error(data.message || '상품 삭제에 실패했습니다.');
-      }
-    } catch (error) {
-      console.error('상품 삭제 처리 중 오류:', error);
-      alert(error.message);
-      setConfirmModalConfig(null);
+    const [data, isErr] = await fetchData(`/product/${selectedProduct.id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-type': 'application/json',
+      },
+    });
+
+    if (isErr) {
+      alert(data.message || '상품 삭제에 실패했습니다.');
+    } else {
+      alert('상품이 삭제되었습니다.');
+      setProducts(products.filter((p) => p.id !== selectedProduct.id));
     }
+    setConfirmModalConfig(null);
   };
 
   const handleOpenDeleteProductConfirm = () => {
@@ -150,30 +140,22 @@ function ProfilePage() {
 
   const handleConfirmDeletePost = async () => {
     if (!selectedPost) return;
-    const API_URL = 'https://dev.wenivops.co.kr/services/mandarin';
     const token = localStorage.getItem('token');
-    const requestUrl = `${API_URL}/post/${selectedPost.id}`;
-    try {
-      const response = await fetch(requestUrl, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-type': 'application/json',
-        },
-      });
-      const data = await response.json();
-      if (response.ok) {
-        alert('게시글이 삭제되었습니다.');
-        setPosts(posts.filter((p) => p.id !== selectedPost.id));
-        setConfirmModalConfig(null);
-      } else {
-        throw new Error(data.message || '게시글 삭제에 실패했습니다.');
-      }
-    } catch (error) {
-      console.error('게시글 삭제 처리 중 오류:', error);
-      alert(error.message);
-      setConfirmModalConfig(null);
+    const [data, isErr] = await fetchData(`/post/${selectedPost.id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-type': 'application/json',
+      },
+    });
+
+    if (isErr) {
+      alert(data.message || '게시글 삭제에 실패했습니다.');
+    } else {
+      alert('게시글이 삭제되었습니다.');
+      setPosts(posts.filter((p) => p.id !== selectedPost.id));
     }
+    setConfirmModalConfig(null);
   };
 
   const handleOpenDeletePostConfirm = () => {
@@ -187,6 +169,29 @@ function ProfilePage() {
 
   const handleFollowToggle = async () => {
     if (!profile) return;
+
+    const token = localStorage.getItem('token');
+    const path = `/profile/${profile.accountname}/${
+      profile.isfollow ? 'unfollow' : 'follow'
+    }`;
+    const method = profile.isfollow ? 'DELETE' : 'POST';
+
+    const [data, isErr] = await fetchData(path, {
+      method: method,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (isErr) {
+      alert('팔로우 상태 변경에 실패했습니다.');
+      return;
+    }
+
+    const updatedProfile = data.profile ? data.profile : data;
+    setProfile(updatedProfile);
+    refetch();
   };
 
   if (loading) return null;
@@ -197,7 +202,6 @@ function ProfilePage() {
       <div className={styles.headerWrapper}>
         <Header type="profile" onClick={handleOpenSettingsModal} />
       </div>
-
       <main className={styles.content}>
         <ProfileInfo
           image={profile.image}
@@ -221,9 +225,7 @@ function ProfilePage() {
         />
         <PostList posts={posts} onMoreClick={handleOpenPostModal} />
       </main>
-
       <Footer />
-
       <Modal
         isOpen={isProductModalOpen}
         onClose={() => setIsProductModalOpen(false)}
@@ -254,7 +256,6 @@ function ProfilePage() {
           </ul>
         </div>
       </Modal>
-
       <Modal
         isOpen={isSettingsModalOpen}
         onClose={() => setIsSettingsModalOpen(false)}
@@ -280,7 +281,6 @@ function ProfilePage() {
           </ul>
         </div>
       </Modal>
-
       <Modal
         isOpen={isPostModalOpen}
         onClose={() => setIsPostModalOpen(false)}
@@ -306,7 +306,6 @@ function ProfilePage() {
           </ul>
         </div>
       </Modal>
-
       {confirmModalConfig && (
         <ConfirmModal
           isOpen={!!confirmModalConfig}

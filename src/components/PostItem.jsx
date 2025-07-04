@@ -7,13 +7,14 @@ import iconHeart from '../assets/icon/icon-heart.png';
 import iconHeartActive from '../assets/icon/icon-heart-active.png';
 import iconMessageCircle from '../assets/icon/icon-message-circle.svg';
 import { useFetchApi } from '../hooks/useFetchApi';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import BottomModal from './BottomModal';
 import ConfirmModal from './common/ConfirmModal';
 
 export default function PostItem({data, isComments = false, commentsCount = 0}) {
 
   const navigate = useNavigate();
+  const location = useLocation();
   const {fetchData} = useFetchApi();
   const [postData, setPostData] = useState(data);
   const authorData = postData.author;
@@ -24,8 +25,9 @@ export default function PostItem({data, isComments = false, commentsCount = 0}) 
   const [isOpenPostModal, setIsOpenPostModal] = useState(false);
   const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
   
-  const accountname = localStorage.getItem('accountname');
-  const token = localStorage.getItem('token');
+  const user = JSON.parse(localStorage.getItem('user'));
+  const accountname = user.accountname;
+  const token = user.token;
   
   const handleDelete = async () => {
     const [data, isErr] = await fetchData(`/post/${postData.id}`, {
@@ -40,7 +42,11 @@ export default function PostItem({data, isComments = false, commentsCount = 0}) 
       alert(data.message);
       return;
     } else {
-      navigate(-1);
+      if(location.pathname === `/profile/${accountname}`) {
+        navigate(0);
+      } else {
+        navigate(`/profile/${accountname}`);
+      }
     }
   };
   const handleUpdate = () => {
@@ -96,7 +102,7 @@ export default function PostItem({data, isComments = false, commentsCount = 0}) 
   };
 
   useEffect(() => {
-    const profileImage = localStorage.getItem('profileimage');
+    const profileImage = user.image;
     if(profileImage) {
       setImage(profileImage);
     }
@@ -122,6 +128,32 @@ export default function PostItem({data, isComments = false, commentsCount = 0}) 
     contents = postData.content.split('\n');
   }
 
+
+
+  const startX = useRef(0);
+  const isSwiping = useRef(false);
+
+  const handleTouchStart = (e) => {
+    startX.current = e.touches[0].clientX;
+    isSwiping.current = true;
+  };
+
+  const handleTouchEnd = (e) => {
+    if (!isSwiping.current) return;
+
+    const endX = e.changedTouches[0].clientX;
+    const diffX = startX.current - endX;
+
+    if (Math.abs(diffX) > 50) {
+      if (diffX > 0) {
+        setCurrent((prev) => (prev + 1) % images.length);
+      } else {
+        setCurrent((prev) => (prev - 1 + images.length) % images.length);
+      }
+    }
+    isSwiping.current = false;
+  };
+
   return (
     <>
       <article className={`${styles.post} ${commentsCount > 0 || !isComments ? '' : styles["no-comments"]}`}>
@@ -133,9 +165,11 @@ export default function PostItem({data, isComments = false, commentsCount = 0}) 
               <span className={styles.handle}>@ {authorData.accountname}</span>
             </div>
           </div>
-          <button className={styles["empty-button"]}>
+          {authorData.accountname === accountname && (
+            <button className={styles["empty-button"]}>
             <img className={styles["icon-small"]} src={iconMoreButtonS} alt="게시글 더 보기 버튼" onClick={() => handlePostMore(authorData.accountname)} />
           </button>
+          )}
         </header>
         
         <section className={styles["post-content"]}>
@@ -149,16 +183,21 @@ export default function PostItem({data, isComments = false, commentsCount = 0}) 
 
       {images.length > 0 && (
         <figure className={styles.carousel}>
-          <div className={styles["image-container"]}>
+          <div className={styles["image-container"]} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
           {images.map((img, idx) => (
             <img key={idx} className={`${styles.image} ${current === idx ? styles.active : ''}`} src={img} alt="" crossOrigin="anonymous" />
           ))}
           </div>
-          <figcaption className={styles.dots}>
-          {images.map((_, idx) => (
-            <span key={idx} className={`${styles.dot} ${current === idx ? styles["active-dot"] : ''}`} onClick={() => setCurrent(idx)} />
-          ))}
-          </figcaption>
+          {
+            images.length > 1 &&
+            (
+              <figcaption className={styles.dots}>
+              {images.map((_, idx) => (
+                <span key={idx} className={`${styles.dot} ${current === idx ? styles["active-dot"] : ''}`} onClick={() => setCurrent(idx)} />
+              ))}
+              </figcaption>
+            )
+          }
         </figure>
       )}
         <nav className={styles["post-actions"]}>

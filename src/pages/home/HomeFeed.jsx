@@ -11,7 +11,7 @@ export default function HomeFeed() {
   const {fetchData} = useFetchApi();
 
   const [posts, setPosts] = useState([]);
-  const token = localStorage.getItem('token');
+  const token = JSON.parse(localStorage.getItem('user')).token;
 
   useEffect(() => {
     const postData = async () => {

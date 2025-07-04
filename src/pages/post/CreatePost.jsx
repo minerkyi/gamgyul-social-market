@@ -22,10 +22,8 @@ export default function CreatePost() {
 
   const {id} = useParams();
   
-  const token = localStorage.getItem('token');
-  if(!token) {
-    navigate('/login');
-  }
+  const user = JSON.parse(localStorage.getItem('user'));
+  const token = user.token;
 
   const handleUpload = async () => {
     let [data, isErr] = [];
@@ -74,9 +72,8 @@ export default function CreatePost() {
       })
     });
 
-    console.log(data);
     if(isErr) {
-      alert(data.message);
+      navigate('/error', {state:{message: data.message.message}});
       return;
     }
 
@@ -95,6 +92,8 @@ export default function CreatePost() {
     previewImgs.forEach((url) => {
       URL.revokeObjectURL(url);
     });
+    
+    navigate(`/profile/${user.accountname}`);
   };
 
   const handlePost = (e) => {
@@ -156,9 +155,9 @@ export default function CreatePost() {
   }, [seletedImgs, post]);
 
   useEffect(() => {
-    const profileImg = localStorage.getItem('profileimage');
+    const profileImg = user.image;
     if(profileImg) {
-      setImage(localStorage.getItem('profileimage'));
+      setImage(profileImg);
     }
 
     if(id) {
@@ -167,14 +166,13 @@ export default function CreatePost() {
         const [data, isErr] = await fetchData(`/post/${id}`, {
           method: "GET",
           headers: {
-            "Authorization" : `Bearer ${token}`,
+            "Authorization" : `Bearer `,
             "Content-type" : "application/json"
           }
         });
 
         if(isErr) {
-          alert(data.message);
-          navigate(-1);
+          navigate('/error', {state:{message: data.message.message}, replace: true});
           return;
         } else {
           const updateData = data.post;
