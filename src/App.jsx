@@ -24,6 +24,7 @@ import SignupProfilePage from './pages/login/SignupProfilePage';
 import HomeFeed from './pages/home/HomeFeed';
 import RequireLogin from './components/RequireLogin';
 import Splash from './pages/Splash';
+import ErrorPage from './pages/ErrorPage';
 
 function App() {
   return (
@@ -50,12 +51,13 @@ function App() {
           <Route path="/chat" element={<RequireLogin><ChatListPage /></RequireLogin>} />
           <Route path="/chat/:chatId" element={<RequireLogin><MessageRoom /></RequireLogin>} />
           
-          <Route path="*" element={<Page404 />} />
-
           <Route path='/login/signup' element={<SignupPage />} />
           <Route path='/login/signup/profile' element={<SignupProfilePage />} />
           <Route path='/login' element={<LoginMain />} />
           <Route path='/login/email' element={<EmailLoginPage />} />
+
+          <Route path="/error" element={<ErrorPage />} />
+          <Route path="*" element={<Page404 />} />
         </Routes>
         <FooterProvider>
           <Footer />

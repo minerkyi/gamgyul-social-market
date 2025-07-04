@@ -154,10 +154,9 @@ export default function Post() {
           "Content-type" : "application/json"
         }
       });
-      console.log(data);
+
       if(isErr) {
-        alert(data.message);
-        navigate(-1);
+        navigate('/error', {state: {message: data.message.message}, replace: true});
         return;
       } else {
         setPostData(data.post);

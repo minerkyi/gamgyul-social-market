@@ -36,6 +36,11 @@ export default function Products() {
             "Content-type" : "application/json"
           }
         });
+
+        if(isErr) {
+          navigate('/error', {state:{message: data.message.message}, replace: true});
+          return;
+        }
         
         const product = data.product;
         setImgPreview(product.itemImage);
@@ -146,7 +151,7 @@ export default function Products() {
         });
 
         if(isError) {
-          alert(data.message);
+          navigate('/error', {state:{message: data.message.message}});
           return;
         } else {
           navigate(-1);
@@ -170,7 +175,7 @@ export default function Products() {
         });
   
         if(isError) {
-          alert(data.message);
+          navigate('/error', {state:{message: data.message.message}});
           return;
         }
 
