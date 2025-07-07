@@ -6,7 +6,7 @@ import profileImg from '../../assets/Ellipse-1.png';
 import iconMoreButton from '../../assets/icon/icon-more-vertical.png';
 import BottomModal from '../../components/BottomModal';
 import PostItem from '../../components/PostItem';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useFetchApi } from '../../hooks/useFetchApi';
 import ConfirmModal from '../../components/common/ConfirmModal';
 
@@ -188,7 +188,7 @@ export default function Post() {
           <section className={styles.comments}>
           {commentsData.map((comment, idx) => (
             <article key={comment.id} className={styles.comment}>
-              <img className={styles["comment-profile-image"]} src={comment.author.image} alt={comment.author.accountname} crossOrigin="anonymous" />
+              <img className={styles["comment-profile-image"]} src={comment.author.image} alt={`${comment.author.accountname} 프로필`} crossOrigin="anonymous" />
               <div className={styles["comment-content"]}>
                 <div className={styles["comment-header"]}>
                   <span className={styles["comment-username"]}>{comment.author.username}</span>
@@ -207,7 +207,7 @@ export default function Post() {
         ) : ''}
         <form className={styles["input-section"]} onSubmit={(e) => handleSubmit(e)}>
           <figure>
-            <img className={styles["input-avatar"]} src={image} alt="" crossOrigin="anonymous" />
+            <img className={styles["input-avatar"]} src={image} alt={`${accountname} 프로필`} crossOrigin="anonymous" />
           </figure>
           <label htmlFor="inputComment" className="sr-only">댓글 작성</label>
           <input className={styles.input} id="inputComment" name="inputComment" placeholder="댓글 달아보기..." value={inputComment} onChange={handleInputComment} />

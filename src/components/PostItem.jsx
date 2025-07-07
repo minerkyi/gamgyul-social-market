@@ -18,7 +18,6 @@ export default function PostItem({data, isComments = false, commentsCount = 0}) 
   const {fetchData} = useFetchApi();
   const [postData, setPostData] = useState(data);
   const authorData = postData.author;
-  const [image, setImage] = useState(profileImg);
   const [heart, setHeart] = useState(iconHeart);
   const [current, setCurrent] = useState(0);
 
@@ -102,11 +101,6 @@ export default function PostItem({data, isComments = false, commentsCount = 0}) 
   };
 
   useEffect(() => {
-    const profileImage = user.image;
-    if(profileImage) {
-      setImage(profileImage);
-    }
-
     if(postData.hearted) {
       setHeart(iconHeartActive);
     } else {
@@ -159,7 +153,7 @@ export default function PostItem({data, isComments = false, commentsCount = 0}) 
       <article className={`${styles.post} ${commentsCount > 0 || !isComments ? '' : styles["no-comments"]}`}>
         <header className={styles["post-header"]}>
           <div className={styles["user-info"]}>
-            <img className={styles["profile-img"]} src={image} alt="이미지 첨부" crossOrigin='anonymous' />
+            <img className={styles["profile-img"]} src={authorData.image || profileImg} alt={`${authorData.accountname} 프로필`} crossOrigin='anonymous' />
             <div className={styles["user-details"]}>
               <strong className={styles.username}>{authorData.username}</strong>
               <span className={styles.handle}>@ {authorData.accountname}</span>
