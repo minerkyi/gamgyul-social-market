@@ -194,7 +194,7 @@ export default function CreatePost() {
       <section className={styles["input-area"]}>
         <aside className={styles["profile-icon"]}>
           <div className={styles["profile-inner"]}>
-            <img src={image} alt="이미지 첨부" crossOrigin='anonymous' />
+            <img src={image} alt={`${user.accountname} 프로필`} crossOrigin='anonymous' />
           </div>
         </aside>
         <label className="sr-only" htmlFor="postText">게시글 입력하기</label>
