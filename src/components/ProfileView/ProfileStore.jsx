@@ -1,7 +1,7 @@
 import styles from './ProfileStore.module.css';
 
 // 개별상품 표시하는 자식 컴포넌트
-function ProductItem({ image, name, price, onProductClick }) {
+function ProductItem({ image, itemName, price, onProductClick }) {
   //숫자에 콤마가 포함된 가격 문자열로 변환하는 함수
   const formatPrice = (price) => {
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -17,11 +17,12 @@ function ProductItem({ image, name, price, onProductClick }) {
       <div className={styles.productImageWrapper}>
         <img
           src={image}
-          alt={`${name} 상품 이미지`}
+          alt={`${itemName} 상품 이미지`}
           className={styles.productImage}
+          crossOrigin="anonymous"
         />
       </div>
-      <p className={styles.productName}>{name}</p>
+      <p className={styles.productName}>{itemName}</p>
       <p className={styles.productPrice}>{formatPrice(price)}원</p>
     </li>
   );
@@ -41,9 +42,9 @@ function ProfileStore({ products, onProductClick }) {
         {products.map((product) => (
           <ProductItem
             key={product.id}
-            name={product.name}
+            itemName={product.itemName}
             price={product.price}
-            image={product.image}
+            image={product.itemImage}
             onProductClick={() => onProductClick(product)}
           />
         ))}
