@@ -166,7 +166,7 @@ export default function CreatePost() {
         const [data, isErr] = await fetchData(`/post/${id}`, {
           method: "GET",
           headers: {
-            "Authorization" : `Bearer `,
+            "Authorization" : `Bearer ${token}`,
             "Content-type" : "application/json"
           }
         });

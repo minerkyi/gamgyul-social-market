@@ -16,7 +16,6 @@ export default function Post() {
   const [inputComment, setInputComment] = useState('');
   const [commentsCount, setCommentsCount] = useState();
   const [image, setImage] = useState(profileImg);
-  const [commentId, setCommentId] = useState(null);
   const [modalInfo, setModalInfo] = useState(null);
   const [isOpenCommentModal, setIsOpenCommentModal] = useState(false);
   const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
@@ -82,11 +81,12 @@ export default function Post() {
       alert(data.message);
       return;
     } else {
+      setIsOpenConfirmModal(false);
       setIsOpenCommentModal(false);
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (commentId) => {
     const [data, isErr] = await fetchData(`/post/${id}/comments/${commentId}`, {
       method: "DELETE",
       headers: {
@@ -104,17 +104,19 @@ export default function Post() {
       setIsOpenCommentModal(false);
     }
   };
+  const [commentModal, setCommentModal] = useState({text:'삭제', message:'댓글을 삭제할까요?', event:null});
   
   const children = [modalInfo];
   const hadleCommentMore = (account, commentId) => {
     console.log('more', commentId);
     if(account === accountname) {
+      setCommentModal({text:'삭제', message:'댓글을 삭제할까요?', event:() => handleDelete(commentId)});
       setModalInfo({title:'삭제', event:() => setIsOpenConfirmModal(true)});
     } else {
-      setModalInfo({title:'신고하기', event:() => handleReport(commentId)});
+      setCommentModal({text:'신고', message:'댓글을 신고할까요?', event:() => handleReport(commentId)});
+      setModalInfo({title:'신고하기', event:() => setIsOpenConfirmModal(true)});
     }
     setIsOpenCommentModal(true);
-    setCommentId(commentId);
   };
 
   const handleSubmit = async (e) => {
@@ -143,6 +145,11 @@ export default function Post() {
 
   const handleInputComment = (e) => {
     setInputComment(e.target.value);
+  };
+
+  const handleCloseModal = () => {
+    setIsOpenConfirmModal(false);
+    setIsOpenCommentModal(false);
   };
 
   useEffect(() => {
@@ -208,7 +215,7 @@ export default function Post() {
         </form>
       </main>
       <BottomModal isOpen={isOpenCommentModal} setIsOpen={setIsOpenCommentModal} children={children} />
-      <ConfirmModal isOpen={isOpenConfirmModal} onClose={() => setIsOpenConfirmModal(false)} message="댓글을 삭제할까요?" confirmText="삭제" onConfirm={(handleDelete)}
+      <ConfirmModal isOpen={isOpenConfirmModal} onClose={handleCloseModal} message={commentModal.message} confirmText={commentModal.text} onConfirm={commentModal.event}
       />
     </>
   );
