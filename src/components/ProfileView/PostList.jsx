@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import styles from './PostList.module.css';
 
 import PostItem from '../PostItem';
@@ -24,13 +25,17 @@ function PostList({ posts }) {
           {posts
             .filter((post) => post.image)
             .map((post) => (
-              <div key={post.id} className={styles.albumItem}>
+              <Link
+                to={`/post/comments/${post.id}`}
+                key={post.id}
+                className={styles.albumItem}
+              >
                 <img
                   src={post.image.split(',')[0]}
                   alt="게시물 썸네일"
                   crossOrigin="anonymous"
                 />
-              </div>
+              </Link>
             ))}
         </div>
       ) : (
