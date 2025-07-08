@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import basicProfileImg from '../assets/basic-profile-img.png';
+import React, { useEffect, useRef, useState } from 'react';
+import styles from './PostItem.module.css';
+
+import { useLocation, useNavigate } from 'react-router-dom';
+import profileImg from '../assets/Ellipse-1.png';
 import iconHeartActive from '../assets/icon/icon-heart-active.png';
 import iconHeart from '../assets/icon/icon-heart.png';
 import iconMessageCircle from '../assets/icon/icon-message-circle.svg';
 import iconMoreButtonS from '../assets/icon/s-icon-more-vertical.png';
-import { useUser } from '../contexts/userContext';
 import { useFetchApi } from '../hooks/useFetchApi';
 import BottomModal from './BottomModal';
 import ConfirmModal from './common/ConfirmModal';
-import styles from './PostItem.module.css';
 
 export default function PostItem({
   data,
@@ -17,19 +17,22 @@ export default function PostItem({
   commentsCount = 0,
 }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { fetchData } = useFetchApi();
-  const { user } = useUser();
-
   const [postData, setPostData] = useState(data);
-  const [isHearted, setIsHearted] = useState(data.hearted);
+  const authorData = postData.author;
+  const [heart, setHeart] = useState(iconHeart);
+  const [current, setCurrent] = useState(0);
+
   const [isOpenPostModal, setIsOpenPostModal] = useState(false);
   const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
 
-  const myAccountname = user ? user.accountname : '';
-  const token = user ? user.token : '';
+  const user = JSON.parse(localStorage.getItem('user'));
+  const accountname = user.accountname;
+  const token = user.token;
 
   const handleDelete = async () => {
-    const [response, isErr] = await fetchData(`/post/${postData.id}`, {
+    const [data, isErr] = await fetchData(`/post/${postData.id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -38,26 +41,33 @@ export default function PostItem({
     });
 
     if (isErr) {
-      alert(response.message);
+      alert(data.message);
       return;
+    } else {
+      if (location.pathname === `/profile/${accountname}`) {
+        navigate(0);
+      } else {
+        navigate(`/profile/${accountname}`);
+      }
     }
-    navigate(`/profile/${myAccountname}`);
   };
-
   const handleUpdate = () => {
     navigate(`/post/update/${postData.id}`);
   };
-
   const children = [
     { title: '삭제', event: () => setIsOpenConfirmModal(true) },
     { title: '수정', event: handleUpdate },
   ];
 
   const handleHearted = async () => {
-    const path = `/post/${postData.id}/${isHearted ? 'unheart' : 'heart'}`;
-    const method = isHearted ? 'DELETE' : 'POST';
+    let path = 'heart';
+    let method = 'POST';
 
-    const [response, isErr] = await fetchData(path, {
+    if (postData.hearted) {
+      path = 'unheart';
+      method = 'DELETE';
+    }
+    const [data, isErr] = await fetchData(`/post/${postData.id}/${path}`, {
       method: method,
       headers: {
         Authorization: `Bearer ${token}`,
@@ -66,15 +76,20 @@ export default function PostItem({
     });
 
     if (isErr) {
-      alert(response.message);
+      alert(data.message);
       return;
+    } else {
+      if (data.post.hearted) {
+        setHeart(iconHeartActive);
+      } else {
+        setHeart(iconHeart);
+      }
+      setPostData(data.post);
     }
-    setPostData(response.post);
-    setIsHearted(response.post.hearted);
   };
 
-  const handlePostMore = (authorAccountname) => {
-    if (myAccountname === authorAccountname) {
+  const handlePostMore = (account) => {
+    if (accountname === account) {
       setIsOpenPostModal(true);
     }
   };
@@ -84,48 +99,83 @@ export default function PostItem({
     const year = date.getFullYear();
     const month = `0${date.getMonth() + 1}`.slice(-2);
     const day = `0${date.getDate()}`.slice(-2);
+
     return `${year}년 ${month}월 ${day}일`;
   };
+
+  useEffect(() => {
+    if (postData.hearted) {
+      setHeart(iconHeartActive);
+    } else {
+      setHeart(iconHeart);
+    }
+  }, []);
 
   const handleComments = (id) => {
     navigate(`/post/comments/${id}`);
   };
 
-  const authorData = postData.author || {};
-  const images = postData.image ? postData.image.split(',') : [];
-  const contents = postData.content ? postData.content.split('\n') : [];
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  let images = [];
+  if (postData.image) {
+    images = postData.image.split(',');
+  }
+
+  let contents = [];
+  if (postData.content) {
+    contents = postData.content.split('\n');
+  }
+
+  const startX = useRef(0);
+  const isSwiping = useRef(false);
+
+  const handleTouchStart = (e) => {
+    startX.current = e.touches[0].clientX;
+    isSwiping.current = true;
+  };
+
+  const handleTouchEnd = (e) => {
+    if (!isSwiping.current) return;
+
+    const endX = e.changedTouches[0].clientX;
+    const diffX = startX.current - endX;
+
+    if (Math.abs(diffX) > 50) {
+      if (diffX > 0) {
+        setCurrent((prev) => (prev + 1) % images.length);
+      } else {
+        setCurrent((prev) => (prev - 1 + images.length) % images.length);
+      }
+    }
+    isSwiping.current = false;
+  };
 
   return (
     <>
       <article
         className={`${styles.post} ${
-          isComments || commentsCount > 0 ? '' : styles['no-comments']
+          commentsCount > 0 || !isComments ? '' : styles['no-comments']
         }`}
       >
         <header className={styles['post-header']}>
           <div className={styles['user-info']}>
             <img
               className={styles['profile-img']}
-              src={authorData.image || basicProfileImg}
-              alt="프로필 이미지"
+              src={authorData.image || profileImg}
+              alt={`${authorData.accountname} 프로필`}
               crossOrigin="anonymous"
-              onError={(e) => (e.target.src = basicProfileImg)}
             />
             <div className={styles['user-details']}>
               <strong className={styles.username}>{authorData.username}</strong>
               <span className={styles.handle}>@ {authorData.accountname}</span>
             </div>
           </div>
-          {myAccountname === authorData.accountname && (
-            <button
-              className={styles['empty-button']}
-              onClick={() => handlePostMore(authorData.accountname)}
-            >
+          {authorData.accountname === accountname && (
+            <button className={styles['empty-button']}>
               <img
                 className={styles['icon-small']}
                 src={iconMoreButtonS}
                 alt="게시글 더 보기 버튼"
+                onClick={() => handlePostMore(authorData.accountname)}
               />
             </button>
           )}
@@ -133,22 +183,31 @@ export default function PostItem({
 
         <section className={styles['post-content']}>
           {contents.map((content, idx) => (
-            <React.Fragment key={idx}>
+            <React.StrictMode key={idx}>
               {content}
               {idx < contents.length - 1 && <br />}
-            </React.Fragment>
+            </React.StrictMode>
           ))}
         </section>
 
         {images.length > 0 && (
           <figure className={styles.carousel}>
-            <div className={styles['image-container']}>
-              <img
-                className={styles.image}
-                src={images[currentImageIndex]}
-                alt="게시물 이미지"
-                crossOrigin="anonymous"
-              />
+            <div
+              className={styles['image-container']}
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
+            >
+              {images.map((img, idx) => (
+                <img
+                  key={idx}
+                  className={`${styles.image} ${
+                    current === idx ? styles.active : ''
+                  }`}
+                  src={img}
+                  alt=""
+                  crossOrigin="anonymous"
+                />
+              ))}
             </div>
             {images.length > 1 && (
               <figcaption className={styles.dots}>
@@ -156,9 +215,9 @@ export default function PostItem({
                   <span
                     key={idx}
                     className={`${styles.dot} ${
-                      currentImageIndex === idx ? styles['active-dot'] : ''
+                      current === idx ? styles['active-dot'] : ''
                     }`}
-                    onClick={() => setCurrentImageIndex(idx)}
+                    onClick={() => setCurrent(idx)}
                   />
                 ))}
               </figcaption>
@@ -169,20 +228,19 @@ export default function PostItem({
           <button className={styles['action-button']} onClick={handleHearted}>
             <img
               className={styles['icon-small']}
-              src={isHearted ? iconHeartActive : iconHeart}
-              alt="좋아요"
+              src={heart}
+              alt="좋아요 개수"
             />
             <span>{postData.heartCount}</span>
           </button>
           <button
             className={styles['action-button']}
             onClick={isComments ? null : () => handleComments(postData.id)}
-            disabled={isComments}
           >
             <img
               className={styles['icon-small']}
               src={iconMessageCircle}
-              alt="댓글"
+              alt="댓글 개수"
             />
             <span>
               {commentsCount > 0 ? commentsCount : postData.commentCount}
