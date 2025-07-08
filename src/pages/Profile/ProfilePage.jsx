@@ -13,6 +13,7 @@ import PostList from '../../components/ProfileView/PostList';
 import ProfileStore from '../../components/ProfileView/ProfileStore';
 import ProfileInfo from '../../components/common/ProfileInfo';
 import { useProfileRefetch } from '../../contexts/ProfileRefetchContext';
+import { useUser } from '../../contexts/userContext';
 import { useFetchApi } from '../../hooks/useFetchApi';
 import MyProfileAction from './Myview/MyProfileAction';
 import YourProfileAction from './Yourview/YourProfileAction';
@@ -31,7 +32,8 @@ function ProfilePage() {
 
   const { accountname } = useParams();
   const navigate = useNavigate();
-  const myAccountname = localStorage.getItem('accountname');
+  const { user } = useUser();
+  const myAccountname = user ? user.accountname : '';
   const isMyProfile = !accountname || accountname === myAccountname;
   const { fetchData } = useFetchApi();
   const { refetchKey, refetch } = useProfileRefetch();
@@ -40,11 +42,16 @@ function ProfilePage() {
     const fetchAllData = async () => {
       setLoading(true);
       const targetAccountname = isMyProfile ? myAccountname : accountname;
-      const token = localStorage.getItem('token');
+      const token = user ? user.token : '';
       const commonHeaders = {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       };
+
+      if (!targetAccountname || !token) {
+        setLoading(false);
+        return;
+      }
 
       const [profileData, profileErr] = await fetchData(
         `/profile/${targetAccountname}`,
@@ -78,6 +85,7 @@ function ProfilePage() {
     navigate,
     refetchKey,
     fetchData,
+    user,
   ]);
 
   const handleProductClick = (product) => {
@@ -85,7 +93,6 @@ function ProfilePage() {
       window.open(product.link, '_blank');
       return;
     }
-
     setSelectedProduct(product);
     setIsProductModalOpen(true);
   };
@@ -110,6 +117,7 @@ function ProfilePage() {
   };
 
   const handleConfirmLogout = () => {
+    localStorage.removeItem('user');
     localStorage.removeItem('token');
     localStorage.removeItem('accountname');
     navigate('/login');
@@ -126,7 +134,7 @@ function ProfilePage() {
 
   const handleConfirmDeleteProduct = async () => {
     if (!selectedProduct) return;
-    const token = localStorage.getItem('token');
+    const token = user ? user.token : '';
     const [data, isErr] = await fetchData(`/product/${selectedProduct.id}`, {
       method: 'DELETE',
       headers: {
@@ -155,7 +163,7 @@ function ProfilePage() {
 
   const handleConfirmDeletePost = async () => {
     if (!selectedPost) return;
-    const token = localStorage.getItem('token');
+    const token = user ? user.token : '';
     const [data, isErr] = await fetchData(`/post/${selectedPost.id}`, {
       method: 'DELETE',
       headers: {
@@ -185,7 +193,7 @@ function ProfilePage() {
   const handleFollowToggle = async () => {
     if (!profile) return;
 
-    const token = localStorage.getItem('token');
+    const token = user ? user.token : '';
     const path = `/profile/${profile.accountname}/${
       profile.isfollow ? 'unfollow' : 'follow'
     }`;
