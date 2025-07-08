@@ -47,7 +47,7 @@ function EmailLoginPage() {
     if (!isErr) {
       saveUser(data);
       setLoginError("");
-      const from = location.state?.from?.pathname || '/';
+      const from = location.state?.from?.pathname || '/home';
       navigate(from, {replace: true});
     } else {
       setLoginError(data.message);
