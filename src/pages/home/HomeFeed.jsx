@@ -11,6 +11,7 @@ export default function HomeFeed() {
   const {fetchData} = useFetchApi();
 
   const [posts, setPosts] = useState([]);
+  const [isComplete, setIsComplete] = useState(false);
   const token = JSON.parse(localStorage.getItem('user')).token;
 
   useEffect(() => {
@@ -28,18 +29,18 @@ export default function HomeFeed() {
         return;
       }
 
-      console.log(data);
       setPosts(data.posts);
+      setIsComplete(true);
     };
     postData(data);
   }, []);
 
   return (
     <>
-      <Header title="감귤마켓 피드" type="home" isTitleVisible={true} />
+      <Header title="동해마켓 피드" type="home" isTitleVisible={true} />
       <main className={styles.main}>
         <h2 className="sr-only">홈 피드</h2>
-        {posts.length > 0 ? posts.map((post) => (
+        {isComplete ? posts.length > 0 ? posts.map((post) => (
             <PostItem key={post.id} data={post} />
           )) : (
             <div className={styles.container}>
@@ -47,7 +48,7 @@ export default function HomeFeed() {
               <p className={styles["feed-message"]}>유저를 검색해 팔로우 해보세요!</p>
               <button className={styles["retry-button"]} onClick={() => {navigate('/search')}}>검색하기</button>
           </div>
-        )}
+        ) : ''}
       </main>
     </>
   )
