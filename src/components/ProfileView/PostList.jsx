@@ -1,7 +1,7 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import styles from './PostList.module.css';
 
-// 상단 보기버튼
 import PostItem from '../PostItem';
 import ViewToggleHeader from './ViewToggleHeader';
 
@@ -20,14 +20,23 @@ function PostList({ posts }) {
     <section className={styles.postSection}>
       <ViewToggleHeader view={view} setView={setView} />
 
-      {/* view 상태에 따라 앨범형 또는 목록형을 조건부로 렌더링합니다. */}
       {view === 'album' ? (
         <div className={styles.albumView}>
-          {posts.map((post) => (
-            <div key={post.id} className={styles.albumItem}>
-              <img src={post.imageUrl} alt="게시물 썸네일" />
-            </div>
-          ))}
+          {posts
+            .filter((post) => post.image)
+            .map((post) => (
+              <Link
+                to={`/post/comments/${post.id}`}
+                key={post.id}
+                className={styles.albumItem}
+              >
+                <img
+                  src={post.image.split(',')[0]}
+                  alt="게시물 썸네일"
+                  crossOrigin="anonymous"
+                />
+              </Link>
+            ))}
         </div>
       ) : (
         <div className={styles.listView}>

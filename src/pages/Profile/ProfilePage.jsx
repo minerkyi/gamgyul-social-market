@@ -80,9 +80,24 @@ function ProfilePage() {
     fetchData,
   ]);
 
-  const handleOpenProductModal = (product) => {
+  const handleProductClick = (product) => {
+    if (!isMyProfile) {
+      window.open(product.link, '_blank');
+      return;
+    }
+
     setSelectedProduct(product);
     setIsProductModalOpen(true);
+  };
+
+  const handleEditProduct = () => {
+    if (!selectedProduct) return;
+    navigate(`/product/update/${selectedProduct.id}`);
+  };
+
+  const handleViewProductWebsite = () => {
+    if (!selectedProduct) return;
+    window.open(selectedProduct.link, '_blank');
   };
 
   const handleOpenSettingsModal = () => {
@@ -202,6 +217,7 @@ function ProfilePage() {
       <div className={styles.headerWrapper}>
         <Header type="profile" onClick={handleOpenSettingsModal} />
       </div>
+
       <main className={styles.content}>
         <ProfileInfo
           image={profile.image}
@@ -219,13 +235,12 @@ function ProfilePage() {
             onFollowToggle={handleFollowToggle}
           />
         )}
-        <ProfileStore
-          products={products}
-          onProductClick={handleOpenProductModal}
-        />
+        <ProfileStore products={products} onProductClick={handleProductClick} />
         <PostList posts={posts} onMoreClick={handleOpenPostModal} />
       </main>
+
       <Footer />
+
       <Modal
         isOpen={isProductModalOpen}
         onClose={() => setIsProductModalOpen(false)}
@@ -244,18 +259,27 @@ function ProfilePage() {
               </button>
             </li>
             <li>
-              <button type="button" className={actionSheetStyles.menuButton}>
+              <button
+                type="button"
+                className={actionSheetStyles.menuButton}
+                onClick={handleEditProduct}
+              >
                 수정
               </button>
             </li>
             <li>
-              <button type="button" className={actionSheetStyles.menuButton}>
+              <button
+                type="button"
+                className={actionSheetStyles.menuButton}
+                onClick={handleViewProductWebsite}
+              >
                 웹사이트에서 상품 보기
               </button>
             </li>
           </ul>
         </div>
       </Modal>
+
       <Modal
         isOpen={isSettingsModalOpen}
         onClose={() => setIsSettingsModalOpen(false)}
@@ -281,6 +305,7 @@ function ProfilePage() {
           </ul>
         </div>
       </Modal>
+
       <Modal
         isOpen={isPostModalOpen}
         onClose={() => setIsPostModalOpen(false)}
@@ -306,6 +331,7 @@ function ProfilePage() {
           </ul>
         </div>
       </Modal>
+
       {confirmModalConfig && (
         <ConfirmModal
           isOpen={!!confirmModalConfig}
