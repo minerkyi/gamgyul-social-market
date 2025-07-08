@@ -89,7 +89,7 @@ function SignupProfilePage() {
       } else {
         setIsAccountIdValid("이미 사용 중인 ID입니다.");
       }
-    }, 5000)
+    }, 500)
   ).current;
 
   const handleAccountnameChange = (e) => {
@@ -123,6 +123,7 @@ function SignupProfilePage() {
           body: formData,
         });
         const data = await res.json();
+        console.log('응답:', data);
         const filename =
           data.filename || (Array.isArray(data) && data[0]?.filename);
         if (filename) {

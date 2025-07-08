@@ -48,7 +48,7 @@
   bottom: 0;
   width: 36px;
   height: 36px;
-  background: #f26e22;
+  background: var(--main-color);
   border-radius: 50%;
   border: none;
   display: flex;
