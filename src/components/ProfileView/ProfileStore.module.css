@@ -52,5 +52,5 @@
 .productPrice {
   font-size: 12px;
   font-weight: bold;
-  color: #f26e22;
+  color: var(--main-color);
 }
