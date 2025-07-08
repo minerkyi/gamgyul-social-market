@@ -1,24 +1,35 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
+import { useUser } from '../../contexts/userContext';
+import { useFetchApi } from '../../hooks/useFetchApi';
 import styles from './ProfileEditPage.module.css';
 
 function ProfileEditPage() {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
-
-  const [profile, setProfile] = useState(null);
-  const [imageFile, setImageFile] = useState(null);
-  const [preview, setPreview] = useState(null);
+  const { user, saveUser } = useUser();
+  const { fetchData } = useFetchApi();
 
   const [username, setUsername] = useState('');
   const [accountId, setAccountId] = useState('');
   const [intro, setIntro] = useState('');
+  const [imageFile, setImageFile] = useState(null);
+  const [preview, setPreview] = useState('');
 
   const [isUsernameValid, setIsUsernameValid] = useState(true);
   const [isAccountIdValid, setIsAccountIdValid] = useState(true);
+  const [accountIdMessage, setAccountIdMessage] = useState('');
+
   const isFormValid =
-    isUsernameValid && isAccountIdValid && username && accountId;
+    isUsernameValid &&
+    isAccountIdValid &&
+    username &&
+    accountId &&
+    (user.username !== username ||
+      user.accountname !== accountId ||
+      user.intro !== intro ||
+      imageFile !== null);
 
   const basicProfileImageUrl = new URL(
     '../../assets/basic-profile-img.png',
@@ -26,68 +37,68 @@ function ProfileEditPage() {
   ).href;
 
   useEffect(() => {
-    const fetchCurrentProfile = async () => {
-      try {
-        const API_URL = 'https://dev.wenivops.co.kr/services/mandarin';
-        const token = localStorage.getItem('token');
-        const myAccountname = localStorage.getItem('accountname');
-
-        if (!token || !myAccountname) {
-          console.error('로그인 정보가 없습니다. 로그인 페이지로 이동합니다.');
-          alert('로그인 정보가 없습니다. 다시 로그인해주세요.');
-          navigate('/');
-          return;
-        }
-
-        const response = await fetch(`${API_URL}/profile/${myAccountname}`, {
-          method: 'GET',
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!response.ok) {
-          throw new Error('프로필 정보를 불러오는 데 실패했습니다.');
-        }
-
-        const data = await response.json();
-        const profileData = data.profile;
-
-        if (!profileData) {
-          throw new Error('서버로부터 받은 프로필 데이터가 올바르지 않습니다.');
-        }
-
-        setProfile(profileData);
-        setUsername(profileData.username);
-        setAccountId(profileData.accountname);
-        setIntro(profileData.intro);
-      } catch (error) {
-        console.error(error);
-        alert('프로필 정보를 가져오는 중 문제가 발생했습니다.');
-        navigate('/profile');
-      }
-    };
-    fetchCurrentProfile();
-  }, [navigate]);
+    if (user) {
+      setUsername(user.username);
+      setAccountId(user.accountname);
+      setIntro(user.intro);
+      setPreview(user.image);
+    } else {
+      navigate('/login');
+    }
+  }, [user, navigate]);
 
   useEffect(() => {
-    if (username === '') return;
-    setIsUsernameValid(username.length >= 2 && username.length <= 10);
+    if (username && (username.length < 2 || username.length > 10)) {
+      setIsUsernameValid(false);
+    } else {
+      setIsUsernameValid(true);
+    }
   }, [username]);
 
+  const checkAccountId = useCallback(
+    async (id) => {
+      const regex = /^[a-zA-Z0-9_.]+$/;
+      if (!regex.test(id)) {
+        setAccountIdMessage('영문, 숫자, 밑줄, 마침표만 사용 가능합니다.');
+        setIsAccountIdValid(false);
+        return;
+      }
+
+      if (user && user.accountname === id) {
+        setAccountIdMessage('');
+        setIsAccountIdValid(true);
+        return;
+      }
+
+      const [data, isErr] = await fetchData('/user/accountnamevalid', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user: { accountname: id } }),
+      });
+
+      if (isErr || data.message !== '사용 가능한 계정ID 입니다.') {
+        setAccountIdMessage(data.message);
+        setIsAccountIdValid(false);
+      } else {
+        setAccountIdMessage('');
+        setIsAccountIdValid(true);
+      }
+    },
+    [fetchData, user]
+  );
+
   useEffect(() => {
-    if (accountId === '') return;
-    const regex = /^[a-zA-Z0-9_.]+$/;
-    const isValidFormat = regex.test(accountId);
-    const isValidLength = accountId.length >= 5 && accountId.length <= 20;
-    setIsAccountIdValid(isValidFormat && isValidLength);
-  }, [accountId]);
+    if (!accountId) return;
+    const debounce = setTimeout(() => {
+      checkAccountId(accountId);
+    }, 500);
+    return () => clearTimeout(debounce);
+  }, [accountId, checkAccountId]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (!file) {
-      setImageFile(null);
-      setPreview(null);
-      return;
-    }
+    if (!file) return;
+
     setImageFile(file);
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -99,76 +110,47 @@ function ProfileEditPage() {
   const handleSave = async () => {
     if (!isFormValid) return;
 
-    const API_URL = 'https://dev.wenivops.co.kr/services/mandarin';
-    const token = localStorage.getItem('token');
-
-    let finalImageUrl = profile ? profile.image : '';
+    let finalImageUrl = user.image;
 
     if (imageFile) {
-      const imageUploadUrl = `${API_URL}/image/uploadfile`;
       const formData = new FormData();
       formData.append('image', imageFile);
-      try {
-        const res = await fetch(imageUploadUrl, {
-          method: 'POST',
-          body: formData,
-        });
-        const data = await res.json();
-
-        if (data.info && data.info.filename) {
-          finalImageUrl = `https://dev.wenivops.co.kr/services/mandarin/${data.info.filename}`;
-        }
-      } catch (error) {
-        console.error('이미지 업로드 실패:', error);
-        return;
-      }
-    }
-
-    const requestBody = {
-      user: { username, accountname: accountId, intro, image: finalImageUrl },
-    };
-
-    try {
-      const res = await fetch(`${API_URL}/user`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
+      const [data, isErr] = await fetchData('/image/uploadfile', {
+        method: 'POST',
+        body: formData,
       });
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        if (errorData.message === '이미 사용중인 계정 ID입니다.') {
-          alert('이미 사용중인 계정 ID입니다.');
-          setIsAccountIdValid(false);
-          return;
-        }
-        throw new Error('프로필 수정 실패');
+      if (isErr) {
+        alert('이미지 업로드에 실패했습니다.');
+        return;
       }
-
-      const data = await res.json();
-      localStorage.setItem('accountname', data.user.accountname);
-      navigate('/profile');
-    } catch (error) {
-      console.error(error);
+      finalImageUrl = `https://dev.wenivops.co.kr/services/mandarin/${data.filename}`;
     }
-  };
 
-  const isValidImageUrl = (url) => {
-    return (
-      typeof url === 'string' &&
-      url.trim() !== '' &&
-      !url.startsWith('blob:') &&
-      /^https?:\/\/.+/.test(url)
-    );
-  };
+    const [updatedUserData, isUpdateErr] = await fetchData('/user', {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user: {
+          username,
+          accountname: accountId,
+          intro,
+          image: finalImageUrl,
+        },
+      }),
+    });
 
-  const finalImageSrc =
-    preview ||
-    (profile && isValidImageUrl(profile.image) && profile.image) ||
-    basicProfileImageUrl;
+    if (isUpdateErr) {
+      alert(updatedUserData.message || '프로필 수정에 실패했습니다.');
+      return;
+    }
+
+    saveUser(updatedUserData.user);
+    navigate('/profile');
+  };
 
   return (
     <div className={styles.pageContainer}>
@@ -185,7 +167,7 @@ function ProfileEditPage() {
             onClick={() => fileInputRef.current.click()}
           >
             <img
-              src={finalImageSrc}
+              src={preview || basicProfileImageUrl}
               alt="프로필 이미지"
               className={styles.profileImage}
               crossOrigin="anonymous"
@@ -210,7 +192,7 @@ function ProfileEditPage() {
               type="text"
               placeholder="2~10자 이내여야 합니다."
             />
-            {username && !isUsernameValid && (
+            {!isUsernameValid && (
               <p className={styles.errorMessage}>* 2~10자 이내여야 합니다.</p>
             )}
           </div>
@@ -222,13 +204,10 @@ function ProfileEditPage() {
               onChange={(e) => setAccountId(e.target.value)}
               id="accountId"
               type="text"
-              placeholder="영문, 숫자, 특수문자(.),(_)만 사용 가능합니다."
+              placeholder="영문, 숫자, 밑줄, 마침표만 사용 가능합니다."
             />
-            {accountId && !isAccountIdValid && (
-              <p className={styles.errorMessage}>
-                * 영문, 숫자, 밑줄, 마침표만 사용할 수 있습니다. 5~20자 이내여야
-                합니다.
-              </p>
+            {!isAccountIdValid && (
+              <p className={styles.errorMessage}>* {accountIdMessage}</p>
             )}
           </div>
           <div className={styles.inputGroup}>

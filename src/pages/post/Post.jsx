@@ -1,17 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
-import styles from './Post.module.css';
+import { useEffect, useState } from 'react';
 import Header from '../../components/Header';
+import styles from './Post.module.css';
 
+import { useNavigate, useParams } from 'react-router-dom';
 import profileImg from '../../assets/Ellipse-1.png';
 import iconMoreButton from '../../assets/icon/icon-more-vertical.png';
 import BottomModal from '../../components/BottomModal';
-import PostItem from '../../components/PostItem';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useFetchApi } from '../../hooks/useFetchApi';
 import ConfirmModal from '../../components/common/ConfirmModal';
+import PostItem from '../../components/PostItem';
+import { useFetchApi } from '../../hooks/useFetchApi';
+import { useUser } from '../../contexts/userContext';
 
 export default function Post() {
-
   const navigate = useNavigate();
   const [inputComment, setInputComment] = useState('');
   const [commentsCount, setCommentsCount] = useState();
@@ -23,22 +23,22 @@ export default function Post() {
   const [postData, setPostData] = useState(null);
   const [commentsData, setCommentsData] = useState([]);
 
-  const {id} = useParams();
-  const user = JSON.parse(localStorage.getItem('user'));
+  const { id } = useParams();
+  const {user} = useUser();
   const token = user.token;
   const accountname = user.accountname;
-  const {fetchData} = useFetchApi();
-  
+  const { fetchData } = useFetchApi();
+
   const getComments = async () => {
     const [data, isErr] = await fetchData(`/post/${id}/comments/?limit=50`, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        "Authorization" : `Bearer ${token}`,
-        "Content-type" : "application/json"
-      }
+        Authorization: `Bearer ${token}`,
+        'Content-type': 'application/json',
+      },
     });
 
-    if(isErr) {
+    if (isErr) {
       alert(data.message);
       return;
     } else {
@@ -51,33 +51,36 @@ export default function Post() {
     const date = new Date(timestamp);
     const now = new Date();
     let diff = now - date;
-    if(diff < 0) {
+    if (diff < 0) {
       diff = 0;
     }
 
-    const rtf = new Intl.RelativeTimeFormat('ko', {numeric: 'auto'});
+    const rtf = new Intl.RelativeTimeFormat('ko', { numeric: 'auto' });
 
     const seconds = Math.floor(diff / 1000);
     const minutes = Math.floor(diff / (1000 * 60));
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-    if(seconds < 60) return rtf.format(-seconds, 'second');
-    if(minutes < 60) return rtf.format(-minutes, 'minute');
-    if(hours < 24) return rtf.format(-hours, 'hour');
+    if (seconds < 60) return rtf.format(-seconds, 'second');
+    if (minutes < 60) return rtf.format(-minutes, 'minute');
+    if (hours < 24) return rtf.format(-hours, 'hour');
     return rtf.format(-days, 'day');
   };
 
   const handleReport = async (commentId) => {
-    const [data, isErr] = await fetchData(`/post/${id}/comments/${commentId}/report`, {
-      method: "POST",
-      headers: {
-        "Authorization" : `Bearer ${token}`,
-        "Content-type" : "application/json"
+    const [data, isErr] = await fetchData(
+      `/post/${id}/comments/${commentId}/report`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-type': 'application/json',
+        },
       }
-    });
+    );
 
-    if(isErr) {
+    if (isErr) {
       alert(data.message);
       return;
     } else {
@@ -88,14 +91,14 @@ export default function Post() {
 
   const handleDelete = async (commentId) => {
     const [data, isErr] = await fetchData(`/post/${id}/comments/${commentId}`, {
-      method: "DELETE",
+      method: 'DELETE',
       headers: {
-        "Authorization" : `Bearer ${token}`,
-        "Content-type" : "application/json"
-      }
+        Authorization: `Bearer ${token}`,
+        'Content-type': 'application/json',
+      },
     });
 
-    if(isErr) {
+    if (isErr) {
       alert(data.message);
       return;
     } else {
@@ -104,36 +107,51 @@ export default function Post() {
       setIsOpenCommentModal(false);
     }
   };
-  const [commentModal, setCommentModal] = useState({text:'삭제', message:'댓글을 삭제할까요?', event:null});
-  
+  const [commentModal, setCommentModal] = useState({
+    text: '삭제',
+    message: '댓글을 삭제할까요?',
+    event: null,
+  });
+
   const children = [modalInfo];
   const hadleCommentMore = (account, commentId) => {
     console.log('more', commentId);
-    if(account === accountname) {
-      setCommentModal({text:'삭제', message:'댓글을 삭제할까요?', event:() => handleDelete(commentId)});
-      setModalInfo({title:'삭제', event:() => setIsOpenConfirmModal(true)});
+    if (account === accountname) {
+      setCommentModal({
+        text: '삭제',
+        message: '댓글을 삭제할까요?',
+        event: () => handleDelete(commentId),
+      });
+      setModalInfo({ title: '삭제', event: () => setIsOpenConfirmModal(true) });
     } else {
-      setCommentModal({text:'신고', message:'댓글을 신고할까요?', event:() => handleReport(commentId)});
-      setModalInfo({title:'신고하기', event:() => setIsOpenConfirmModal(true)});
+      setCommentModal({
+        text: '신고',
+        message: '댓글을 신고할까요?',
+        event: () => handleReport(commentId),
+      });
+      setModalInfo({
+        title: '신고하기',
+        event: () => setIsOpenConfirmModal(true),
+      });
     }
     setIsOpenCommentModal(true);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if(inputComment) {
+    if (inputComment) {
       const [data, isErr] = await fetchData(`/post/${id}/comments`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Authorization" : `Bearer ${token}`,
-          "Content-type" : "application/json"
+          Authorization: `Bearer ${token}`,
+          'Content-type': 'application/json',
         },
         body: JSON.stringify({
-          "comment": {"content":inputComment}
-        })
+          comment: { content: inputComment },
+        }),
       });
-  
-      if(isErr) {
+
+      if (isErr) {
         alert(data.message);
         return;
       } else {
@@ -155,15 +173,18 @@ export default function Post() {
   useEffect(() => {
     const postData = async () => {
       const [data, isErr] = await fetchData(`/post/${id}`, {
-        method: "GET",
+        method: 'GET',
         headers: {
-          "Authorization" : `Bearer ${token}`,
-          "Content-type" : "application/json"
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-type': 'application/json',
+        },
       });
 
-      if(isErr) {
-        navigate('/error', {state: {message: data.message.message}, replace: true});
+      if (isErr) {
+        navigate('/error', {
+          state: { message: data.message.message },
+          replace: true,
+        });
         return;
       } else {
         setPostData(data.post);
@@ -173,7 +194,7 @@ export default function Post() {
     postData();
 
     const profileImage = user.image;
-    if(profileImage) {
+    if (profileImage) {
       setImage(profileImage);
     }
   }, []);
@@ -183,39 +204,98 @@ export default function Post() {
       <Header title="게시글" type="profile" />
       <main className={styles.container}>
         <h2 className="sr-only">게시물 댓글 작성</h2>
-        {postData ? <PostItem data={postData} commentsCount={commentsCount} isComments={true} /> : ''}
+        {postData ? (
+          <PostItem
+            data={postData}
+            commentsCount={commentsCount}
+            isComments={true}
+          />
+        ) : (
+          ''
+        )}
         {commentsData.length > 0 ? (
           <section className={styles.comments}>
-          {commentsData.map((comment, idx) => (
-            <article key={comment.id} className={styles.comment}>
-              <img className={styles["comment-profile-image"]} src={comment.author.image} alt={`${comment.author.accountname} 프로필`} crossOrigin="anonymous" />
-              <div className={styles["comment-content"]}>
-                <div className={styles["comment-header"]}>
-                  <span className={styles["comment-username"]}>{comment.author.username}</span>
-                  <span className={styles["comment-time"]}>· {getRelativeTime(comment.createdAt)}</span>
+            {commentsData.map((comment, idx) => (
+              <article key={comment.id} className={styles.comment}>
+                <img
+                  className={styles['comment-profile-image']}
+                  src={comment.author.image}
+                  alt={`${comment.author.accountname} 프로필`}
+                  crossOrigin="anonymous"
+                />
+                <div className={styles['comment-content']}>
+                  <div className={styles['comment-header']}>
+                    <span className={styles['comment-username']}>
+                      {comment.author.username}
+                    </span>
+                    <span className={styles['comment-time']}>
+                      · {getRelativeTime(comment.createdAt)}
+                    </span>
+                  </div>
+                  <div className={styles['comment-text']}>
+                    {comment.content}
+                  </div>
                 </div>
-                <div className={styles["comment-text"]}>
-                  {comment.content}
-                </div>
-              </div>
-              <button className={styles["empty-button"]}>
-                <img className={styles["comment-image-more"]} src={iconMoreButton} alt="댓글 더 보기 버튼" onClick={() => hadleCommentMore(comment.author.accountname, comment.id)} />
-              </button>
-            </article>
-          ))}
+                <button className={styles['empty-button']}>
+                  <img
+                    className={styles['comment-image-more']}
+                    src={iconMoreButton}
+                    alt="댓글 더 보기 버튼"
+                    onClick={() =>
+                      hadleCommentMore(comment.author.accountname, comment.id)
+                    }
+                  />
+                </button>
+              </article>
+            ))}
           </section>
-        ) : ''}
-        <form className={styles["input-section"]} onSubmit={(e) => handleSubmit(e)}>
+        ) : (
+          ''
+        )}
+        <form
+          className={styles['input-section']}
+          onSubmit={(e) => handleSubmit(e)}
+        >
           <figure>
-            <img className={styles["input-avatar"]} src={image} alt={`${accountname} 프로필`} crossOrigin="anonymous" />
+            <img
+              className={styles['input-avatar']}
+              src={image}
+              alt={`${accountname} 프로필`}
+              crossOrigin="anonymous"
+            />
           </figure>
-          <label htmlFor="inputComment" className="sr-only">댓글 작성</label>
-          <input className={styles.input} id="inputComment" name="inputComment" placeholder="댓글 달아보기..." value={inputComment} onChange={handleInputComment} />
-          <button className={`${styles["send-button"]} ${inputComment? styles.active : ''}`} type="submit">게시</button>
+          <label htmlFor="inputComment" className="sr-only">
+            댓글 작성
+          </label>
+          <input
+            className={styles.input}
+            id="inputComment"
+            name="inputComment"
+            placeholder="댓글 달아보기..."
+            value={inputComment}
+            onChange={handleInputComment}
+          />
+          <button
+            className={`${styles['send-button']} ${
+              inputComment ? styles.active : ''
+            }`}
+            type="submit"
+          >
+            게시
+          </button>
         </form>
       </main>
-      <BottomModal isOpen={isOpenCommentModal} setIsOpen={setIsOpenCommentModal} children={children} />
-      <ConfirmModal isOpen={isOpenConfirmModal} onClose={handleCloseModal} message={commentModal.message} confirmText={commentModal.text} onConfirm={commentModal.event}
+      <BottomModal
+        isOpen={isOpenCommentModal}
+        setIsOpen={setIsOpenCommentModal}
+        children={children}
+      />
+      <ConfirmModal
+        isOpen={isOpenConfirmModal}
+        onClose={handleCloseModal}
+        message={commentModal.message}
+        confirmText={commentModal.text}
+        onConfirm={commentModal.event}
       />
     </>
   );
