@@ -9,6 +9,7 @@ import BottomModal from '../../components/BottomModal';
 import ConfirmModal from '../../components/common/ConfirmModal';
 import PostItem from '../../components/PostItem';
 import { useFetchApi } from '../../hooks/useFetchApi';
+import { useUser } from '../../contexts/userContext';
 
 export default function Post() {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ export default function Post() {
   const [commentsData, setCommentsData] = useState([]);
 
   const { id } = useParams();
-  const user = JSON.parse(localStorage.getItem('user'));
+  const {user} = useUser();
   const token = user.token;
   const accountname = user.accountname;
   const { fetchData } = useFetchApi();

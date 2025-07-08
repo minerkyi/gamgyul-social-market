@@ -10,6 +10,7 @@ import iconMoreButtonS from '../assets/icon/s-icon-more-vertical.png';
 import { useFetchApi } from '../hooks/useFetchApi';
 import BottomModal from './BottomModal';
 import ConfirmModal from './common/ConfirmModal';
+import { useUser } from '../contexts/userContext';
 
 export default function PostItem({
   data,
@@ -27,7 +28,7 @@ export default function PostItem({
   const [isOpenPostModal, setIsOpenPostModal] = useState(false);
   const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
 
-  const user = JSON.parse(localStorage.getItem('user'));
+  const {user} = useUser();
   const accountname = user.accountname;
   const token = user.token;
 
