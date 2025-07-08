@@ -118,7 +118,7 @@ function SignupProfilePage() {
       const formData = new FormData();
       formData.append("image", profileImageFile);
       try {
-        const res = await fetch("https://dev.wenivops.co.kr/image/uploadfile", {
+        const res = await fetch("https://dev.wenivops.co.kr/services/mandarin/image/uploadfile", {
           method: "POST",
           body: formData,
         });
