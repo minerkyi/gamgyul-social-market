@@ -29,7 +29,7 @@
   bottom: 0;
   width: 36px;
   height: 36px;
-  background-color: #f26e22;
+  background-color: var(--main-color);
   background-image: url(../../assets/icon/icon-upload.png);
   background-repeat: no-repeat;
   background-position: center;
