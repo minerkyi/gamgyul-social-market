@@ -250,7 +250,7 @@ export default function PostItem({
         </nav>
         <footer className={styles['post-date']}>
           <time dateTime={postData.updatedAt}>
-            {formatDate(postData.updatedAt)}
+            {formatDate(postData.createdAt)}
           </time>
         </footer>
       </article>
