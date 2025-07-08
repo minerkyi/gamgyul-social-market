@@ -73,7 +73,7 @@
 }
 
 .myMessageRow .bubble {
-  background-color: #f26e22;
+  background-color: var(--main-color);
   color: #fff;
   border-top-right-radius: 0;
 }
@@ -97,3 +97,5 @@
 .myMessageRow .time {
   order: 1;
 }
+
+/* (--main-color) */

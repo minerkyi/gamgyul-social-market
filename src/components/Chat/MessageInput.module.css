@@ -58,5 +58,5 @@
 }
 
 .sendButton.active {
-  color: #f26e22;
+  color: var(--main-color);
 }
