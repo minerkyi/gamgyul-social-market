@@ -31,6 +31,7 @@ function ChatListItem({ chat }) {
             onError={(e) => {
               e.target.src = basicProfileImageUrl;
             }}
+            crossOrigin="anonymous"
           />
           {unreadCount > 0 && <div className={styles.unreadDot}></div>}
         </div>

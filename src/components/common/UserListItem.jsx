@@ -10,7 +10,7 @@ function UserListItem({ user }) {
   const { image, username, accountname, isfollow } = user;
   const [isFollowed, setIsFollowed] = useState(isfollow);
   const { fetchData } = useFetchApi();
-  const myAccountname = localStorage.getItem('accountname');
+  const myAccountname = JSON.parse(localStorage.getItem('user')).accountname;
   const { refetch } = useProfileRefetch();
 
   const handleFollowToggle = async () => {
@@ -51,6 +51,7 @@ function UserListItem({ user }) {
           alt={`${username}의 프로필 이미지`}
           className={styles.profileImage}
           onError={handleImageError}
+          crossOrigin="anonymous"
         />
         <div className={styles.textInfo}>
           <p className={styles.userName}>{username}</p>

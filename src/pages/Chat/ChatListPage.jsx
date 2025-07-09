@@ -32,7 +32,7 @@ const dummyChatList = dummyUsers.map((user, index) => ({
   lastMessage: dummyLastMessages[index],
   timestamp: dummyTimestamps[index],
   unreadCount: index < 2 ? 2 - index : 0,
-}));
+})).filter((_, index) => index < 4);
 
 function ChatListPage() {
   const navigate = useNavigate();

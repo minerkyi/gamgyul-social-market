@@ -39,6 +39,7 @@ function UserListItem({ user, keyword }) {
           onError={(e) => {
             e.target.src = basicProfileImageUrl;
           }}
+          crossOrigin="anonymous"
         />
         <div className={styles.userInfo}>
           <span className={styles.userName}>
