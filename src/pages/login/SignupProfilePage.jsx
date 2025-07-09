@@ -123,9 +123,7 @@ function SignupProfilePage() {
           body: formData,
         });
         const data = await res.json();
-        console.log('응답:', data);
-        const filename =
-          data.filename || (Array.isArray(data) && data[0]?.filename);
+        const filename = data?.info?.filename;
         if (filename) {
           imageUrl = `https://dev.wenivops.co.kr/services/mandarin/${filename}`;
         }
