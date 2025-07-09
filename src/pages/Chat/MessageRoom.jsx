@@ -77,6 +77,7 @@ function MessageRoom() {
                 src={chatPartner.profileImage}
                 alt="상대방 프로필"
                 className={styles.profileImage}
+                crossOrigin="anonymous"
               />
             )}
             <div className={styles.messageContent}>
