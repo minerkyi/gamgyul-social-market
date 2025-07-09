@@ -231,7 +231,7 @@ function SignupProfilePage() {
             placeholder="자신과 판매할 상품에 대해 소개해 주세요!"
             onChange={(e) => setIntro(e.target.value)}
           />
-          <Button text="감귤 마켓 시작하기" disabled={!isFormValid} />
+          <Button text="동해 마켓 시작하기" disabled={!isFormValid} />
         </form>
       </div>
     </div>
