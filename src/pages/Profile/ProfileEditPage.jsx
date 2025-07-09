@@ -124,7 +124,7 @@ function ProfileEditPage() {
         alert('이미지 업로드에 실패했습니다.');
         return;
       }
-      finalImageUrl = `https://dev.wenivops.co.kr/services/mandarin/${data.filename}`;
+      finalImageUrl = `https://dev.wenivops.co.kr/services/mandarin/${data.info.filename}`;
     }
 
     const [updatedUserData, isUpdateErr] = await fetchData('/user', {
@@ -148,7 +148,12 @@ function ProfileEditPage() {
       return;
     }
 
-    saveUser(updatedUserData.user);
+    // 로그인 정보 localStorage 업데이트
+    user.username = updatedUserData.user.username;
+    user.accountname = updatedUserData.user.accountname;
+    user.intro = updatedUserData.user.intro;
+    user.image = updatedUserData.user.image;
+    localStorage.setItem('user', JSON.stringify(user));
     navigate('/profile');
   };
 
