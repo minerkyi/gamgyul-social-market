@@ -164,6 +164,10 @@ export default function PostItem({
               src={authorData.image || profileImg}
               alt={`${authorData.accountname} 프로필`}
               crossOrigin="anonymous"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = profileImg;
+              }}
             />
             <div className={styles['user-details']}>
               <strong className={styles.username}>{authorData.username}</strong>

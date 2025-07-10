@@ -222,6 +222,10 @@ export default function Post() {
                   src={comment.author.image}
                   alt={`${comment.author.accountname} 프로필`}
                   crossOrigin="anonymous"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = profileImg;
+                  }}
                 />
                 <div className={styles['comment-content']}>
                   <div className={styles['comment-header']}>
@@ -262,6 +266,10 @@ export default function Post() {
               src={image}
               alt={`${accountname} 프로필`}
               crossOrigin="anonymous"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = profileImg;
+              }}
             />
           </figure>
           <label htmlFor="inputComment" className="sr-only">
