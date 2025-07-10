@@ -6,12 +6,15 @@
   - 로그인
   - 회원가입
   - 프로필
+  - 게시글
   - 상품
   - 채팅
 
 ### 1.2 기능
+- 로그인 홈
 - 로그인
 - 회원가입
+- 검색
 - 프로필
 - 팔로워, 팔로잉 목록
 - 프로필 수정
@@ -22,16 +25,16 @@
 - 채팅 목록
 - 피드(홈 화면)
 - 하단 탭 메뉴
+- 팔로우/언팔로우 버튼
 - 좋아요 버튼
 - 모달 버튼
 
 ### 1.3 팀 구성
 역할 | 이름 | 담당 영역
 -- | -- | --
-팀장 | 김용일 | 상품 등록, 게시글 댓글 페이지, 게시글 작성 페이지
-팀원 | 윤광석 | 사용자 프로필 페이지, 팔로워 / 팔로잉 목록, 내 프로필 수정
-팀원 | 윤동령 | 로그인, 회원가입
-팀원 | 우영기 | splash, 채팅 목록, 채팅방
+팀장 | 김용일 | 상품 등록, 게시글 댓글, 게시글 작성, 피드(홈 화면), 좋아요 버튼
+팀원 | 윤광석 | 검색, 프로필, 프로필 수정, 팔로워/팔로우 목록, 팔로우/언팔로우 버튼, 채팅 목록, 채팅 방, 하단 탭, 모달 버튼
+팀원 | 윤동령 | 로그인 홈, 이메일 로그인, 회원가입, 전체 QA
 
 ## 2. 개발 환경
 
@@ -272,22 +275,45 @@ function processUserData(userData) {
 - <https://minerkyi.github.io/gamgyul-social-market/>
 - 테스트용 계정
   ```
-  id : 
-  pw : 
+  id : test@test.com
+  pw : 1234!@#$
   ```
   
 ### 2.5 연동 API
 - [API 명세](https://www.notion.so/oreumi/API-19debaa8982b8129aaa9f8c4678447ac)
 - 요청 URL: <https://dev.wenivops.co.kr/services/mandarin>
 
-  | URL                          | Note                            |
-  |------------------------------|---------------------------------|
-  | /product/create              | 상품 등록                        |
-  | /product/update/:product_id  | 상품 수정                        |
-  | /post/create                 | 게시글 작성                      |
-  | /profile                     | 프로필                          |
-  | /profile/edit                | 프로필 수정                      |
-  | /profile/:accountname        | 프로필 상세                     |
+  | URL                                         | Method    | Note                      |
+  |---------------------------------------------|-----------|---------------------------|
+  | /user/emailvalid                            | POST      | 이메일 검증                |
+  | /user/accountnamevalid                      | POST      | 계정 검증                  |
+  | /image/uploadfile                           | POST      | 한개 이미지 업로드          |
+  | /image/uploadfiles                          | POST      | 여러개 이미지 업로드        |
+  | /user                                       | POST      | 회원가입                  |
+  | /user/login                                 | POST      | 로그인                    |
+  | /post/feed                                  | GET       | 팔로잉 게시글 목록(피드)    |
+  | /profile/:accountname                       | GET       | 개인 프로필               |
+  | /user                                       | PUT       | 프로필 수정               |
+  | /post/:accountname/userpost                 | GET       | 유저별 게시글 목록         |
+  | /profile/:accountname/follow                | POST      | 팔로우                   |
+  | /profile/:accountname/unfollow              | DELETE    | 언팔로우                 |
+  | /profile/:accountname/following             | GET       | 팔로잉 리스트             |
+  | /profile/:accountname/follower              | GET       | 팔로워 리스트             |
+  | /post                                       | POST      | 게시글 작성               |
+  | /post/:post_id                              | GET       | 게시글 상세               |
+  | /post/:post_id                              | PUT       | 게시글 수정               |
+  | /post/:post_id                              | DELETE    | 게시글 삭제               |
+  | /post/:post_id/comments                     | GET       | 댓글 리스트               |
+  | /post/:post_id/comments                     | POST      | 댓글 작성                 |
+  | /post/:post_id/comments/:comment_id         | DELETE    | 댓글 삭제                 |
+  | /post/:post_id/comments/:comment_id/report  | POST      | 댓글 신고                 |
+  | /product/:accountname                       | GET       | 상품 리스트                |
+  | /product                                    | POST      | 상품 등록                  |
+  | /product/detail/:product_id                 | GET       | 상품 상세                  |
+  | /product/:product_id                        | PUT       | 상품 수정                  |
+  | /product/:product_id                        | DELETE    | 상품 삭제                  |
+  | /post/:post_id/heart                        | POST      | 좋아요                    |
+  | /post/:post_id/unheart                      | DELETE    | 좋아요 취소                |
 
 ## 3. 요구사항 명세와 기능 명세
 - 
@@ -297,19 +323,164 @@ function processUserData(userData) {
 ### 4.1 프로젝트 구조
 ```
 gamgyul-social-market
-├─ src
-│  ├─ componets
-│  │  └─ Sample1.jsx
-│  ├─ contexts
-│  ├─ hooks
-│  └─ pages
-├─ index.html
-├─ package.json
-├─ package-lock.json
 ├─ eslint.config.js
-├─ vite.config.js
-├─ .gitignore
-└─ README.md
+├─ index.html
+├─ package-lock.json
+├─ package.json
+├─ public
+│  ├─ 404.html
+│  └─ favicon.ico
+├─ README.md
+├─ src
+│  ├─ App.jsx
+│  ├─ assets
+│  │  ├─ basic-profile-img.png
+│  │  ├─ Ellipse 6.png
+│  │  ├─ Ellipse-1.png
+│  │  ├─ facebook.png
+│  │  ├─ full-logo.png
+│  │  ├─ google.png
+│  │  ├─ icon
+│  │  │  ├─ iccon-img-layers.png
+│  │  │  ├─ iccon-img-layers.svg
+│  │  │  ├─ icon-arrow-left.png
+│  │  │  ├─ icon-delete.png
+│  │  │  ├─ icon-delete.svg
+│  │  │  ├─ icon-edit.png
+│  │  │  ├─ icon-edit.svg
+│  │  │  ├─ icon-ellipse 7.svg
+│  │  │  ├─ icon-heart-active.png
+│  │  │  ├─ icon-heart.png
+│  │  │  ├─ icon-home-fill.png
+│  │  │  ├─ icon-home-fill.svg
+│  │  │  ├─ icon-home.png
+│  │  │  ├─ icon-home.svg
+│  │  │  ├─ icon-image.png
+│  │  │  ├─ icon-message-circle-fill.png
+│  │  │  ├─ icon-message-circle.png
+│  │  │  ├─ icon-message-circle.svg
+│  │  │  ├─ icon-more-vertical.png
+│  │  │  ├─ icon-post-album-off.png
+│  │  │  ├─ icon-post-album-on.png
+│  │  │  ├─ icon-post-list-off.png
+│  │  │  ├─ icon-post-list-on.png
+│  │  │  ├─ icon-search.png
+│  │  │  ├─ icon-share.png
+│  │  │  ├─ icon-upload.png
+│  │  │  ├─ icon-user-fill.png
+│  │  │  ├─ icon-user.png
+│  │  │  ├─ icon-user.svg
+│  │  │  └─ s-icon-more-vertical.png
+│  │  ├─ icon-404.png
+│  │  ├─ icon-error.png
+│  │  ├─ img-button.png
+│  │  ├─ message-circle.png
+│  │  ├─ symbol-logo-gray.png
+│  │  ├─ symbol-logo-W.png
+│  │  └─ upload-file.png
+│  ├─ components
+│  │  ├─ BottomModal.jsx
+│  │  ├─ BottomModal.module.css
+│  │  ├─ Chat
+│  │  │  ├─ ChatListItem.jsx
+│  │  │  ├─ ChatListItem.module.css
+│  │  │  ├─ MessageInput.jsx
+│  │  │  └─ MessageInput.module.css
+│  │  ├─ common
+│  │  │  ├─ ActionSheet.module.css
+│  │  │  ├─ Button
+│  │  │  │  ├─ Button.jsx
+│  │  │  │  ├─ Button.module.css
+│  │  │  │  ├─ SnsButton.jsx
+│  │  │  │  └─ SnsButton.module.css
+│  │  │  ├─ ConfirmModal.jsx
+│  │  │  ├─ ConfirmModal.module.css
+│  │  │  ├─ Input
+│  │  │  │  ├─ InputField.jsx
+│  │  │  │  └─ InputField.module.css
+│  │  │  ├─ Modal.jsx
+│  │  │  ├─ Modal.module.css
+│  │  │  ├─ ProfileInfo.jsx
+│  │  │  ├─ ProfileInfo.module.css
+│  │  │  ├─ UserListItem.jsx
+│  │  │  └─ UserListItem.module.css
+│  │  ├─ Footer.jsx
+│  │  ├─ Footer.module.css
+│  │  ├─ Header.jsx
+│  │  ├─ Header.module.css
+│  │  ├─ PostItem.jsx
+│  │  ├─ PostItem.module.css
+│  │  ├─ ProfileView
+│  │  │  ├─ PostList.jsx
+│  │  │  ├─ PostList.module.css
+│  │  │  ├─ ProfileStore.jsx
+│  │  │  ├─ ProfileStore.module.css
+│  │  │  ├─ ViewToggleHeader.jsx
+│  │  │  └─ ViewToggleHeader.module.css
+│  │  ├─ RequireLogin.jsx
+│  │  └─ Search
+│  │     ├─ UserListItem.jsx
+│  │     └─ UserListItem.module.css
+│  ├─ contexts
+│  │  ├─ FooterContext.jsx
+│  │  ├─ ProfileRefetchContext.jsx
+│  │  └─ userContext.jsx
+│  ├─ data
+│  │  └─ dummyUsers.js
+│  ├─ hooks
+│  │  └─ useFetchApi.js
+│  ├─ index.css
+│  ├─ main.jsx
+│  └─ pages
+│     ├─ Chat
+│     │  ├─ ChatListPage.jsx
+│     │  ├─ ChatListPage.module.css
+│     │  ├─ MessageRoom.jsx
+│     │  └─ MessageRoom.module.css
+│     ├─ ErrorPage.jsx
+│     ├─ ErrorPage.module.css
+│     ├─ Home
+│     │  ├─ HomeFeed.jsx
+│     │  └─ HomeFeed.module.css
+│     ├─ Index.jsx
+│     ├─ login
+│     │  ├─ EmailLoginPage.jsx
+│     │  ├─ EmailLoginPage.module.css
+│     │  ├─ LoginMain.jsx
+│     │  ├─ LoginMain.module.css
+│     │  ├─ SignupPage.jsx
+│     │  ├─ SignupPage.module.css
+│     │  ├─ SignupProfilePage.jsx
+│     │  └─ SignupProfilePage.module.css
+│     ├─ Page404.jsx
+│     ├─ Page404.module.css
+│     ├─ post
+│     │  ├─ CreatePost.jsx
+│     │  ├─ CreatePost.module.css
+│     │  ├─ Post.jsx
+│     │  └─ Post.module.css
+│     ├─ products
+│     │  ├─ Products.jsx
+│     │  └─ Products.module.css
+│     ├─ Profile
+│     │  ├─ FollowListPage.jsx
+│     │  ├─ FollowListPage.module.css
+│     │  ├─ Myview
+│     │  │  ├─ MyProfileAction.jsx
+│     │  │  └─ MyProfileAction.module.css
+│     │  ├─ ProfileEditPage.jsx
+│     │  ├─ ProfileEditPage.module.css
+│     │  ├─ ProfilePage.jsx
+│     │  ├─ ProfilePage.module.css
+│     │  └─ Yourview
+│     │     ├─ YourProfileAction.jsx
+│     │     └─ YourProfileAction.module.css
+│     ├─ Search
+│     │  ├─ SearchPage.jsx
+│     │  └─ SearchPage.module.css
+│     ├─ Splash.jsx
+│     └─ Splash.module.css
+└─ vite.config.js
 ```
 ### 4.2 개발 일정
 ```mermaid
