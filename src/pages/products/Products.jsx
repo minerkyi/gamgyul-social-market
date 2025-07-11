@@ -186,7 +186,7 @@ export default function Products() {
         setSeletedImg(null);
         setImgPreview(null);
 
-        navigate(`/profile/${user.accountname}`);
+        navigate(`/profile`);
       }
     }
   };

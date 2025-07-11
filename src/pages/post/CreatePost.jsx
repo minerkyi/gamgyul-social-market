@@ -93,7 +93,7 @@ export default function CreatePost() {
       URL.revokeObjectURL(url);
     });
     
-    navigate(`/profile/${user.accountname}`);
+    navigate(`/profile`);
   };
 
   const handlePost = (e) => {
