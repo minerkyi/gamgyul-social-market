@@ -191,7 +191,7 @@ export default function CreatePost() {
     if(isLoading) {
       setDisabeld(true);
     }
-  }, isLoading);
+  }, [isLoading]);
 
   return (
     <>
