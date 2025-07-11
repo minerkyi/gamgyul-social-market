@@ -18,7 +18,7 @@ export default function CreatePost() {
   const [imageNames, setImageNames] = useState([]);
 
   const [image, setImage] = useState(profileImg);
-  const {fetchData} = useFetchApi();
+  const {fetchData, isLoading} = useFetchApi();
 
   const {id} = useParams();
   
@@ -186,6 +186,12 @@ export default function CreatePost() {
       postData();
     }
   }, []);
+
+  useEffect(() => {
+    if(isLoading) {
+      setDisabeld(true);
+    }
+  }, isLoading);
 
   return (
     <>

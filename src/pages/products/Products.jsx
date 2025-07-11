@@ -24,7 +24,7 @@ export default function Products() {
   const {id} = useParams();
   const user = JSON.parse(localStorage.getItem('user'));
   const token = user.token;
-  const {fetchData, result} = useFetchApi();
+  const {fetchData, result, isLoading} = useFetchApi();
 
   useEffect(() => {
     if(id) {
@@ -198,6 +198,12 @@ export default function Products() {
       }
     }
   }, [objectUrl]);
+
+  useEffect(() => {
+    if(isLoading) {
+      setDisabled(true);
+    }
+  }, [isLoading]);
 
 
   return (
