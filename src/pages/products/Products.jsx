@@ -221,7 +221,7 @@ export default function Products() {
 
           <fieldset className={styles["form-group"]}>
             <label className={`${styles["form-label"]} fw-500`}htmlFor="price">가격</label>
-            <input type="text" className={styles["form-input"]} id="price" name="price" placeholder="숫자만 입력 가능합니다." required value={displayPrice} onChange={handlePrice} />
+            <input type="text" className={styles["form-input"]} id="price" name="price" placeholder="숫자만 입력 가능합니다." required value={displayPrice} onChange={handlePrice} inputMode="numeric" />
           </fieldset>
 
           <fieldset className={styles["form-group"]}>
